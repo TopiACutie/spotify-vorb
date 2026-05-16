@@ -1,6 +1,14 @@
 # Spotify VORB — Changelog
 
 
+## v2.12.2 (2026-05-16)
+Fix settings save clearing tokens, remove duplicate status check, sync settings window tokens
+
+### Fixed
+- **Saving settings disconnected from Spotify**: The settings window captured `currentSettings` when it opened (before connecting). When saved, it sent stale settings without tokens, wiping them out. Fixed by preserving existing tokens in `save-settings` handler if the incoming settings don't have them.
+- **Settings window status showed wrong state**: A duplicate status check at the end of `applyToUI()` overrode the proper three-state logic (not configured / credentials set / connected). Removed the duplicate — now correctly shows "Not configured", "Credentials set — click Connect", or "Connected".
+- **Settings window didn't sync tokens after connecting**: The 5-second interval that polled for fresh settings only updated the status dots, not `currentSettings`. Now it syncs `currentSettings.spotify` (clientId, clientSecret, accessToken, refreshToken) so saves always include current tokens.
+
 ## v2.12.1 (2026-05-16)
 Fix missing shell import in main.js
 

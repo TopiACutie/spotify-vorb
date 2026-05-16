@@ -1,6 +1,6 @@
 {
   "name": "spotify-vorb",
-  "version": "2.12.1",
+  "version": "2.12.2",
   "description": "A desktop audio visualizer and overlay for Spotify. Displays song info in a circular glass orb with an audio waveform visualizer. Runs in the system tray and doubles as an OBS browser source for streaming.",
   "author": "Sossi (Feel free to use :))",
   "main": "main.js",
