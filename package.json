@@ -1,0 +1,62 @@
+{
+  "name": "spotify-vorb",
+  "version": "2.11.2",
+  "description": "A desktop audio visualizer and overlay for Spotify. Displays song info in a circular glass orb with an audio waveform visualizer. Runs in the system tray and doubles as an OBS browser source for streaming.",
+  "author": "Sossi (Feel free to use :))",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "obs": "electron . --obs-only",
+    "build": "electron-builder && node scripts/clean-dist.js",
+    "build:dir": "electron-builder --dir",
+    "new-version": "node scripts/new-version.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "electron-updater": "^6.8.3",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.spotify-vorb.app",
+    "productName": "Spotify VORB",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!dist",
+      "!settings"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "deleteAppDataOnUninstall": false,
+      "perMachine": true,
+      "allowElevation": true,
+      "include": "scripts/installer.nsh",
+      "license": "LICENSE",
+      "language": "English",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Spotify VORB"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "TopiACutie",
+      "repo": "spotify-vorb"
+    },
+    "extraMetadata": {
+      "main": "main.js"
+    }
+  }
+}

@@ -1,0 +1,301 @@
+===============================================================================
+                          SPOTIFY VORB - HOW TO RUN
+                          Visualized Oscillation Radio Ball
+===============================================================================
+
+WHAT IS VORB?
+--------------
+VORB is a desktop audio visualizer and overlay for Spotify. It displays song
+info inside a circular glass orb surrounded by an audio waveform visualizer.
+It runs in the system tray, auto-pairs with Spotify, and can be used as an
+OBS browser source for streaming.
+
+Source code: https://github.com/TopiACutie/spotify-vorb
+
+===============================================================================
+PREREQUISITES
+===============================================================================
+
+1. Node.js (v18 or newer)
+   - Download from: https://nodejs.org/
+   - Open a terminal (PowerShell or CMD) and type: node --version
+   - You should see "v18.x.x" or higher
+
+2. Spotify Developer App (FREE)
+   a. Go to: https://developer.spotify.com/dashboard
+   b. Log in with your Spotify account
+   c. Click "Create App"
+   d. App name: "Spotify VORB" (or anything)
+   e. App description: Anything
+   f. Redirect URI: Add http://127.0.0.1:8888/callback
+      (This is NOT localhost - Spotify allows 127.0.0.1)
+   g. Click "Save"
+   h. Copy your Client ID and Client Secret from the app settings
+   i. You'll enter these in VORB's Settings window on first launch
+
+3. VoiceMeeter (OPTIONAL - for audio visualizer)
+   - Download from: https://vb-audio.com/Voicemeeter/
+   - Install VoiceMeeter (the free Banana version works great)
+   - IMPORTANT: After installing, you need to set up audio routing:
+     a. Open VoiceMeeter
+     b. Set your music/Spotify output to go through VoiceMeeter
+     c. In Windows sound settings, set VoiceMeeter Output as your
+        default playback device, OR route Spotify specifically:
+        - Right-click speaker icon > Sounds > Volume Mixer
+        - Set Spotify to output to "VoiceMeeter Input"
+   - The VORB app will automatically detect VoiceMeeter and capture
+     its audio for the visualizer
+
+   WITHOUT VoiceMeeter: The visualizer will show a gentle animated
+   waveform, but won't react to actual music.
+
+===============================================================================
+QUICK START
+===============================================================================
+
+1. Open a terminal (PowerShell) in the Spotify-VORB folder:
+     cd C:\Spotify-VORB
+
+2. Install dependencies (first time only):
+     npm install
+
+   This downloads Electron, axios, express, and other required packages.
+
+3. Start the app:
+     npm start
+
+4. On first launch:
+   - Open Settings (tray icon > Settings)
+   - Enter your Spotify Client ID and Client Secret
+   - Click "Connect" — a browser tab will open for Spotify authorization
+   - Log in and authorize the app
+   - The browser tab will show "Spotify Vorb Connected" and close
+   - A Windows notification will say "Spotify connected"
+
+5. Play music on Spotify:
+   - The VORB orb will appear with album art, song info, and the
+     audio visualizer waveform around it
+   - Stop/pause music: The orb fades away after 3 seconds
+   - Resume: The orb fades back in
+
+===============================================================================
+HOW TO USE
+===============================================================================
+
+SYSTEM TRAY:
+-----------
+Look for the VORB icon in your system tray (near the clock).
+Right-click it for options:
+
+  - Show/Hide Overlay: Toggle the VORB window visibility
+  - Settings: Open the customization panel
+  - Reload Spotify Auth: Generate a fresh Spotify token
+  - Disconnect Spotify: Disconnect and stop auto-reconnecting
+  - Check for Updates: Manually check for a newer version
+  - Uninstall VORB...: Remove the application
+  - Quit: Exit the app completely
+
+SETTINGS WINDOW:
+---------------
+  SPOTIFY API:
+    - Client ID: Your Spotify Developer app's Client ID
+    - Client Secret: Your Spotify Developer app's Client Secret (masked)
+    - Connect: Start the OAuth authorization flow
+    - Reload Authentication: Get a fresh token (when connected)
+    - Disconnect: Disconnect and prevent auto-reconnect
+
+  COLORS:
+    - Primary: Main text color (default: white)
+    - Accent: Highlights (default: Spotify green)
+    - Background: Inner orb fill color
+    - Secondary: Artist/album text color
+    - Rainbow Mode: Static / Breathing / Switching
+
+  DISPLAY:
+    - Toggle individual elements on/off:
+      Cover Art, Title, Artist, Album, Progress Bar, Visualizer
+    - Great for OBS - hide what you don't want to show
+
+  AUDIO:
+    - Source: VoiceMeeter (auto), Default Input, Custom Device,
+      or Desktop Audio (loopback)
+    - Shows VoiceMeeter detection status
+    - Lists all available audio devices
+
+  VISUALIZER:
+    - Sensitivity: How reactive the waveform is (0.2x to 3.0x)
+    - Bar Count: Number of wave segments (60 to 360)
+
+  BEHAVIOR:
+    - Volume Opacity: Ties UI transparency to Spotify volume
+    - Min/Max Opacity: Range for volume-based opacity
+    - Fade Delay: How long after pause before orb hides
+    - Always On Top: Keep VORB above other windows
+
+  UPDATES:
+    - Update URL: Point this at your hosted updates folder
+    - Auto-check on startup: Check for updates when the app launches
+
+  SAVE: All settings persist to %APPDATA%\Spotify VORB\config.json
+
+===============================================================================
+OBS BROWSER SOURCE SETUP
+===============================================================================
+
+To use VORB in your OBS stream:
+
+1. Keep the VORB app running in the background
+2. In OBS, add a new "Browser" source
+3. Set the URL to: http://127.0.0.1:3001
+4. Set Width: 460, Height: 460
+5. Enable "Refresh browser when scene becomes active"
+6. You should see the VORB orb in OBS
+7. Position and resize as needed
+
+OBS SETTINGS TIPS:
+  - In VORB settings, turn off elements you don't want on stream
+  - Use the color picker to match your stream's theme
+  - The visualizer shows the exact same waveform as the desktop app
+    (audio data is relayed from your desktop capture in real-time)
+  - The OBS source still works reliably when VORB is minimized
+    (audio relay runs at a steady 60fps independent of the window)
+
+===============================================================================
+AUTO-UPDATES SETUP
+===============================================================================
+
+VORB supports automatic updates so you never need to manually uninstall and
+reinstall. Here's how to set it up:
+
+1. After building a new version with `npm run build`:
+   - Locate the installer: dist\Spotify VORB Setup X.X.X.exe
+   - Locate the metadata: dist\latest.yml
+
+2. Upload both files to any web server (or GitHub Releases):
+   - Place them in a folder accessible via HTTPS
+   - Example: https://your-server.com/updates/
+
+3. In VORB's Settings > Updates:
+   - Set "Update URL" to the URL of the folder
+   - Make sure "Auto-check on startup" is enabled
+
+4. On next startup (or clicking "Check for Updates" in the tray):
+   - The app compares its version against latest.yml
+   - If a newer version is found, it downloads silently
+   - The update installs automatically on next app quit
+
+===============================================================================
+BUILDING A STANDALONE INSTALLER
+===============================================================================
+
+To package VORB as a Windows installer (.exe):
+
+  npm run build
+
+This creates:
+  dist\Spotify VORB Setup X.X.X.exe    — NSIS installer
+  dist\latest.yml                       — Auto-update metadata
+
+You can run the built app without Node.js once installed.
+
+===============================================================================
+TROUBLESHOOTING
+===============================================================================
+
+Q: The app won't start / "electron: command not found"
+A: Run "npm install" first to download dependencies.
+
+Q: Spotify auth fails / "No code received"
+A: Make sure http://127.0.0.1:8888/callback is in your Spotify app's
+   Redirect URIs list on the Spotify Developer Dashboard.
+   Also make sure your Client ID and Client Secret are correct in
+   Settings > Spotify API.
+
+Q: No audio visualizer / visualizer not moving
+A: VoiceMeeter is needed for live audio visualization. Without it,
+   a gentle pulsing animation is shown instead. Install VoiceMeeter
+   and configure your audio to route through it.
+
+Q: App opens multiple times
+A: The app automatically kills any existing instance on startup.
+   If you still see duplicates, check Task Manager for lingering
+   "Spotify VORB.exe" processes and end them manually.
+
+Q: Orb not showing / always transparent
+A: Make sure you're playing music on Spotify. Check that the Spotify
+   volume isn't at 0%. Try clicking "Connect" in Settings.
+
+Q: Settings not saving
+A: Check that %APPDATA%\Spotify VORB\config.json is writable. Run the
+   terminal as Administrator if needed.
+
+Q: Can't close / hangs in task manager
+A: Right-click the tray icon and choose "Quit". If it hangs, end
+   "Spotify VORB.exe" in Task Manager.
+
+Q: Auto-update fails / "No update URL configured"
+A: Go to Settings > Updates and set your Update URL. If you don't
+   have a server yet, you can skip auto-updates and manually run the
+   new installer whenever you build a new version.
+
+Q: "Rate limited" message on the orb
+A: Spotify's API limits how often apps can check playback status.
+   The app will automatically retry when the limit expires. This
+   usually happens if the app was restarted many times in quick
+   succession. Just wait for the countdown to reach 0.
+
+===============================================================================
+FILE STRUCTURE
+===============================================================================
+
+spotify-vorb/
+  AGENTS.md            - Architecture, design, rules, workflow (authoritative)
+  CHANGELOG.md         - Version history (what changed and why)
+  how-to-run.txt       - This file (setup, OBS, troubleshooting)
+  main.js              - Electron main process (tray, IPC, auto-updater)
+  preload.js           - Bridge between app and UI
+  package.json         - Dependencies, scripts, build config, canonical version
+
+  core/
+    settings.js        - Settings load/save/merge with deep defaults
+    spotify.js         - Spotify OAuth, polling, token refresh
+    voicemeeter.js     - VoiceMeeter detection helper (Windows)
+    logger.js          - File-based debug logger (settings/debug.log)
+
+  server/
+    ui-server.js       - Express HTTP/SSE server for OBS browser source
+
+  %APPDATA%/Spotify VORB/
+    config.json        - Persistent settings file (auto-generated)
+    debug.log          - Debug log file (auto-generated)
+
+  ui/
+    index.html         - Single-page overlay with orb, cover art, meta
+    style.css          - Orb styling with CSS custom properties
+    renderer.js        - Visualizer rendering, audio capture, UI logic
+    settings.html      - Full settings panel with all config options
+    splash.html        - Startup splash screen
+
+  assets/
+    icon.ico           - Application icon
+
+===============================================================================
+COMMANDS REFERENCE
+===============================================================================
+
+  npm install     - Install all dependencies (first time)
+  npm start       - Launch the VORB app (full desktop mode)
+  npm run build   - Package into NSIS installer (dist/ folder)
+  npm run obs     - Run just the OBS server (no Electron UI)
+  npm run build:dir - Package into unpacked directory (for testing)
+
+===============================================================================
+LICENSE
+===============================================================================
+
+This software is provided as-is, free to use, modify, and distribute.
+No warranty is provided. Use at your own risk.
+
+===============================================================================
+                                ENJOY!
+===============================================================================

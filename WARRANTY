@@ -1,0 +1,28 @@
+# Disclaimer & Warranty
+
+## No Warranty
+
+Spotify VORB is provided **"AS IS"** without any warranty, express or implied.
+
+The authors and contributors make no guarantees regarding:
+- Fitness for a particular purpose
+- Merchantability
+- Non-infringement of third-party rights
+- Uninterrupted or error-free operation
+- Compatibility with future versions of Spotify, Windows, or OBS
+
+## Use at Your Own Risk
+
+By using this software, you acknowledge that:
+- Audio capture requires third-party software (VoiceMeeter or similar)
+- Spotify API access requires your own Developer credentials
+- The software interacts with system audio and may require audio driver configuration
+- Auto-updates download and execute files from a user-configured URL
+
+## Limitation of Liability
+
+In no event shall the authors or copyright holders be liable for any claim, damages, or other liability arising from the use of, or inability to use, this software.
+
+## Third-Party Services
+
+This software uses the Spotify Web API. Use of the Spotify API is subject to Spotify's Developer Terms of Service. This project is not affiliated with, endorsed by, or connected to Spotify AB.
