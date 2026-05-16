@@ -1,6 +1,12 @@
 # Spotify VORB — Changelog
 
 
+## v2.12.1 (2026-05-16)
+Fix missing shell import in main.js
+
+### Fixed
+- **Missing `shell` import caused "open-url" IPC to crash**: The `shell` module from Electron was used in the `open-url` IPC handler but wasn't included in the destructured imports. This would cause the app to crash when trying to open external URLs (e.g., Spotify Developer Dashboard link in Settings). Added `shell` to the Electron imports in `main.js`.
+
 ## v2.12.0 (2026-05-16)
 Final polish: optimized code, tuned frequencies, GitHub releases, polished uninstaller, LICENSE/README/WARRANTY
 
