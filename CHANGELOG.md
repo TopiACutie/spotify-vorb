@@ -1,6 +1,35 @@
 # Spotify VORB — Changelog
 
 
+## v2.12.0 (2026-05-16)
+Final polish: optimized code, tuned frequencies, GitHub releases, polished uninstaller, LICENSE/README/WARRANTY
+
+### Added
+- **LICENSE (MIT)**: Standard MIT license for open-source distribution
+- **WARRANTY**: Disclaimer and limitation of liability document
+- **README.md**: Professional project overview with features, quick start, OBS setup, and license info
+- **.gitignore**: Excludes node_modules, dist/, settings/, and OS files from the repo
+- **NSIS installer improvements**: Custom installer script (`scripts/installer.nsh`) that kills running processes, removes registry entries, and cleans up shortcuts during uninstall
+- **Uninstaller "Clear cached data" option**: New checkbox in the uninstall window to remove temporary files and cached album art
+- **GitHub Releases auto-updater**: Changed from generic provider to GitHub provider — uploads `latest.yml` and installer directly to GitHub Releases
+
+### Changed
+- **Frequency tuning reworked**: Visualizer now prioritizes musical reactivity in this order:
+  - **Kicks (0-1)**: Sudden/hard reactivity — attack 0.92, release 0.15, gain 3.5
+  - **Hats/Snares (30-60+)**: High reactivity — attack 0.80/0.78, release 0.18/0.20, gain 1.8/1.6
+  - **Loud/Screamed Vocals (14-29)**: Moderate reactivity — attack 0.65, release 0.20, gain 1.5
+  - **Vocals/Melody (6-13)**: Low reactivity — attack 0.45, release 0.25, gain 1.2
+  - **Bass/808 (2-5)**: Rumble/shake reactivity — attack 0.70, release 0.22, gain 2.0
+- **All code optimized and compressed**: Removed unnecessary whitespace, combined declarations, shortened variable names where safe, and eliminated dead code. Hot paths (processAudio, drawVisualizer) are as lean as possible while maintaining full functionality.
+- **Uninstaller UI polished**: Cleaner layout, better animations, spinner during uninstall, professional typography and spacing
+- **Settings HTML compressed**: CSS and JS minified while maintaining readability and functionality
+- **package.json publish config**: Changed from generic URL to GitHub Releases (`provider: github, owner: TopiACutie, repo: spotify-vorb`)
+
+### Fixed
+- **Uninstaller didn't clear cache**: Added explicit cache directory removal option
+- **NSIS uninstaller didn't kill processes**: Added `taskkill` in custom NSIS script to ensure clean uninstall
+- **Uninstaller window had double scrollbar**: Fixed layout to use proper flexbox with single scroll area
+
 ## v2.11.2 (2026-05-16)
 Fix tray menu always showing auth options, rebuild on state change, validate credentials before connect
 
