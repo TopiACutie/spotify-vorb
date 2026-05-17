@@ -1,6 +1,20 @@
 # Spotify VORB — Changelog
 
 
+## v2.13.0 (2026-05-17)
+Add Spotify Debug window with real-time connection monitoring
+
+### Added
+- **Spotify Debug window**: New troubleshooting panel accessible from the tray menu ("Spotify Debug"). Shows real-time connection status, credentials state, token validity, and a live log of all Spotify API responses, auth events, and errors.
+- **Test Auth button**: Makes a direct API call to `/v1/me/player` to verify the current access token is valid and returns the actual response (track name, artist, playing state, device name, or error details).
+- **Force Reconnect button**: Triggers a full Spotify re-authentication from the debug window.
+- **Filterable log**: Toggle visibility of Info, Success, Error, Warning, Data, and Auth log entries independently.
+- **Status cards**: Four real-time indicators showing Credentials (set/not set), Access Token (valid/expired), Connection state, and Last Poll time.
+
+### Changed
+- **Spotify callback now broadcasts to debug window**: Every data update and status change from Spotify is streamed to the debug window if open, so you can see exactly what the API is returning in real time.
+- **Split long `app.whenReady()` line**: Broke the monolithic startup block into named functions (`onSpotifyData`, `onSpotifyStatus`) for cleaner code and easier debugging.
+
 ## v2.12.3 (2026-05-17)
 Replace taskkill with proper single instance lock
 

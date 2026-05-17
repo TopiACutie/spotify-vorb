@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VORB Debug — Spotify Connection</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Consolas,monospace;background:#0d0d0d;color:#e0e0e0;font-size:12px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.header{padding:12px 16px;background:#151515;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.header h1{font-size:14px;font-weight:600;color:#fff}
+.header h1 span{color:#1DB954}
+.btn{padding:6px 14px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-primary{background:#1DB954;color:#000}.btn-primary:hover{background:#1ed760}
+.btn-secondary{background:#2a2a2a;color:#ccc;border:1px solid #3a3a3a}.btn-secondary:hover{background:#3a3a3a}
+.btn-danger{background:#e74c3c;color:#fff}.btn-danger:hover{background:#c0392b}
+.btn-row{display:flex;gap:8px}
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px;background:#111;border-bottom:1px solid #2a2a2a;flex-shrink:0}
+.status-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:10px 12px}
+.status-card .label{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.status-card .value{font-size:13px;font-weight:600}
+.status-card .value.ok{color:#1DB954}.status-card .value.err{color:#e74c3c}.status-card .value.warn{color:#f0ad4e}.status-card .value.idle{color:#666}
+.log-area{flex:1;overflow-y:auto;padding:8px 16px;font-family:Consolas,'Courier New',monospace;font-size:11px;line-height:1.6}
+.log-entry{padding:3px 0;border-bottom:1px solid #1a1a1a;display:flex;gap:8px}
+.log-entry .time{color:#444;white-space:nowrap;min-width:70px}
+.log-entry .type{font-weight:700;min-width:70px;text-transform:uppercase;font-size:10px;padding-top:1px}
+.log-entry .type.info{color:#3498db}.log-entry .type.success{color:#1DB954}.log-entry .type.error{color:#e74c3c}.log-entry .type.warn{color:#f0ad4e}.log-entry .type.data{color:#9b59b6}.log-entry .type.auth{color:#e67e22}
+.log-entry .msg{color:#bbb;word-break:break-all;flex:1}
+.log-entry .msg code{background:#1a1a1a;padding:1px 4px;border-radius:3px;color:#ddd;font-size:10px}
+.toolbar{padding:8px 16px;background:#151515;border-top:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.toolbar .filter{display:flex;gap:6px}
+.toolbar .filter label{font-size:10px;color:#666;display:flex;align-items:center;gap:3px;cursor:pointer}
+.toolbar .filter input{accent-color:#1DB954}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0d0d0d}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="header">
+<h1><span>●</span> Spotify Connection Debug</h1>
+<div class="btn-row">
+<button class="btn btn-primary" onclick="testAuth()">Test Auth</button>
+<button class="btn btn-secondary" onclick="forceReconnect()">Force Reconnect</button>
+<button class="btn btn-danger" onclick="clearLog()">Clear</button>
+</div>
+</div>
+<div class="status-grid" id="statusGrid">
+<div class="status-card"><div class="label">Credentials</div><div class="value idle" id="sCreds">Checking...</div></div>
+<div class="status-card"><div class="label">Access Token</div><div class="value idle" id="sToken">Checking...</div></div>
+<div class="status-card"><div class="label">Connection</div><div class="value idle" id="sConn">Checking...</div></div>
+<div class="status-card"><div class="label">Last Poll</div><div class="value idle" id="sPoll">Waiting...</div></div>
+</div>
+<div class="log-area" id="logArea"></div>
+<div class="toolbar">
+<div class="filter">
+<label><input type="checkbox" checked data-filter="info"> Info</label>
+<label><input type="checkbox" checked data-filter="success"> Success</label>
+<label><input type="checkbox" checked data-filter="error"> Error</label>
+<label><input type="checkbox" checked data-filter="warn"> Warn</label>
+<label><input type="checkbox" checked data-filter="data"> Data</label>
+<label><input type="checkbox" checked data-filter="auth"> Auth</label>
+</div>
+<span style="font-size:10px;color:#444" id="logCount">0 entries</span>
+</div>
+<script>
+let logEntries=[];
+function addLog(type,msg){
+const now=new Date().toLocaleTimeString('en-US',{hour12:false});
+const entry={time:now,type,msg};
+logEntries.push(entry);
+const area=document.getElementById("logArea");
+const div=document.createElement("div");
+div.className="log-entry";
+div.dataset.type=type;
+div.innerHTML=`<span class="time">${now}</span><span class="type ${type}">${type}</span><span class="msg">${msg}</span>`;
+area.appendChild(div);
+area.scrollTop=area.scrollHeight;
+document.getElementById("logCount").textContent=logEntries.length+" entries";
+}
+function updateStatus(id,text,cls){const el=document.getElementById(id);el.textContent=text;el.className="value "+cls}
+function clearLog(){logEntries=[];document.getElementById("logArea").innerHTML="";document.getElementById("logCount").textContent="0 entries"}
+function testAuth(){window.electronAPI.debugTestAuth().then(r=>{addLog("auth","Test result: "+JSON.stringify(r))}).catch(e=>addLog("error","Test failed: "+e.message))}
+function forceReconnect(){window.electronAPI.debugForceReconnect();addLog("auth","Force reconnect triggered")}
+document.querySelectorAll(".filter input").forEach(cb=>{cb.addEventListener("change",()=>{const type=cb.dataset.filter;document.querySelectorAll(`.log-entry[data-type="${type}"]`).forEach(e=>{e.style.display=cb.checked?"":"none"})})});
+window.electronAPI.onDebugUpdate(d=>{
+if(d.type==="status"){
+if(d.creds!==undefined)updateStatus("sCreds",d.creds.ok?"Set ("+d.creds.id.slice(0,8)+"...)":"Not set",d.creds.ok?"ok":"err");
+if(d.token!==undefined)updateStatus("sToken",d.token.ok?"Valid (expires in "+d.token.expiresIn+"s)":"Missing/Expired",d.token.ok?"ok":"err");
+if(d.conn!==undefined)updateStatus("sConn",d.conn.connected?"Connected ("+d.conn.status+")":"Disconnected",d.conn.connected?"ok":"err");
+if(d.poll!==undefined)updateStatus("sPoll",d.poll.time,d.poll.ok?"ok":"warn");
+}
+if(d.type==="log")addLog(d.logType,d.message);
+if(d.type==="data"){
+const track=d.data.track||"None",artist=d.data.artist||"None",playing=d.data.isPlaying?"▶ Playing":"⏸ Paused",progress=d.data.progress?formatMs(d.data.progress):"--",dur=d.data.duration?formatMs(d.data.duration):"--";
+addLog("data",`Track: <code>${track}</code> | Artist: <code>${artist}</code> | ${playing} | ${progress}/${dur}`);
+}
+});
+function formatMs(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+window.electronAPI.getDebugInit().then(d=>{
+if(d.creds)updateStatus("sCreds",d.creds.ok?"Set ("+d.creds.id.slice(0,8)+"...)":"Not set",d.creds.ok?"ok":"err");
+if(d.token)updateStatus("sToken",d.token.ok?"Valid (expires in "+d.token.expiresIn+"s)":"Missing/Expired",d.token.ok?"ok":"err");
+if(d.conn)updateStatus("sConn",d.conn.connected?"Connected":"Disconnected",d.conn.connected?"ok":"err");
+addLog("info","Debug window initialized");
+});
+</script>
+</body>
+</html>
