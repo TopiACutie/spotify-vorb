@@ -119,7 +119,7 @@ document.querySelectorAll(`.log-entry[data-type="${type}"]`).forEach(e=>{e.style
 });
 window.electronAPI.onDebugUpdate(d=>{
 if(d.type==="status"){
-if(d.creds!==undefined)updateStatus("sCreds",d.creds.ok?"Set":"Not set",d.creds.ok?"ok":"err",d.creds.ok?"ID: "+d.creds.id.slice(0,8)+"...":"Enter in Settings");
+if(d.creds!==undefined)updateStatus("sCreds",d.creds.ok?"Set":"Not set",d.creds.ok?"ok":"err",d.creds.ok?"Credentials configured":"Enter in Settings");
 if(d.token!==undefined)updateStatus("sToken",d.token.ok?"Valid":"Missing",d.token.ok?"ok":"err",d.token.ok?"Expires in "+d.token.expiresIn+"s":"Re-authenticate needed");
 if(d.conn!==undefined)updateStatus("sConn",d.conn.connected?"Connected":"Disconnected",d.conn.connected?"ok":"err",d.conn.status||"No connection");
 if(d.poll!==undefined)updateStatus("sPoll",d.poll.time,d.poll.ok?"ok":"warn",d.poll.ok?"API responding":"No response");
@@ -132,7 +132,7 @@ addLog("data",`<code>${track}</code> — <code>${artist}</code> | ${playing} | $
 });
 function fmt(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
 window.electronAPI.getDebugInit().then(d=>{
-if(d.creds)updateStatus("sCreds",d.creds.ok?"Set":"Not set",d.creds.ok?"ok":"err",d.creds.ok?"ID: "+d.creds.id.slice(0,8)+"...":"Enter in Settings");
+if(d.creds)updateStatus("sCreds",d.creds.ok?"Set":"Not set",d.creds.ok?"ok":"err",d.creds.ok?"Credentials configured":"Enter in Settings");
 if(d.token)updateStatus("sToken",d.token.ok?"Valid":"Missing",d.token.ok?"ok":"err",d.token.ok?"Token present":"Re-authenticate needed");
 if(d.conn)updateStatus("sConn",d.conn.connected?"Connected":"Disconnected",d.conn.connected?"ok":"err","Waiting for data...");
 addLog("info","Debug window initialized — monitoring Spotify connection");

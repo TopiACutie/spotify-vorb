@@ -1,13 +1,14 @@
 {
   "name": "spotify-vorb",
-  "version": "2.13.1",
-  "description": "A desktop audio visualizer and overlay for Spotify. Displays song info in a circular glass orb with an audio waveform visualizer. Runs in the system tray and doubles as an OBS browser source for streaming.",
-  "author": "Sossi (Feel free to use :))",
+  "version": "3.0.0",
+  "description": "Spotify VORB - Desktop audio visualizer and overlay",
+  "author": "Sossi",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "obs": "electron . --obs-only",
     "build": "electron-builder && node scripts/clean-dist.js",
+    "build:publish": "electron-builder --publish always && node scripts/clean-dist.js",
     "build:dir": "electron-builder --dir",
     "new-version": "node scripts/new-version.js"
   },
@@ -33,7 +34,15 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.ico",
+      "legalTrademarks": "",
+      "requestedExecutionLevel": "asInvoker",
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
+      "fileAssociations": [],
+      "extraResources": [],
+      "publisherName": "Sossi"
     },
     "nsis": {
       "oneClick": false,
@@ -54,6 +63,7 @@
       "owner": "TopiACutie",
       "repo": "spotify-vorb"
     },
+    "copyright": "Copyright © 2026 Sossi",
     "extraMetadata": {
       "main": "main.js"
     }

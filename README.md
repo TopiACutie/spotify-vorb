@@ -1,65 +1,99 @@
-# Spotify VORB — Visualized Oscillation Radio Ball
+# Spotify VORB
 
-A translucent floating orb that sits on your screen showing what you're playing on Spotify — album art, title, artist — with a reactive circular waveform that pulses to the music. Doubles as an OBS browser source for streaming.
+> **V**isualized **O**scillation **R**adio **B**all — A reactive circular audio visualizer for Spotify.
 
-![Version](https://img.shields.io/github/v/release/TopiACutie/spotify-vorb)
-![License](https://img.shields.io/github/license/TopiACutie/spotify-vorb)
-![Platform](https://img.shields.io/badge/platform-Windows-blue)
+![Version](https://img.shields.io/github/v/release/TopiACutie/spotify-vorb?label=version)
+![Platform](https://img.shields.io/badge/platform-windows-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-blue)
+
+A translucent floating orb that sits on top of your screen and shows what song you're playing on Spotify — album art, title, artist — with a reactive circular waveform that pulses to the music. Doubles as an OBS browser source for streaming.
+
+![VORB Preview](assets/preview.png)
 
 ## Features
 
-- **Glass orb UI** with frosted glass effect and smooth animations
-- **Real-time audio visualizer** — circular waveform reacting to music via VoiceMeeter or any audio input
-- **Spotify integration** — shows track title, artist, album, cover art, and playback progress
-- **OBS browser source** — same visuals streamed at 60fps via local SSE relay
-- **System tray** — runs in the background with quick access to settings and controls
-- **Auto-updates** — downloads and installs new versions silently on quit
-- **Customizable** — colors, display toggles, visualizer sensitivity, audio source, and more
+- **Real-time audio visualization** — 6 visualizer styles (Spiky, Wavy, Rounded, Bars, Dots, Lines) with kick-reactive smooth curves
+- **Spotify integration** — OAuth2 auth, auto-polling, track info, album art, progress bar
+- **Rainbow modes** — Static, Breathing, Switching, Wave — each bar gets a unique color
+- **Granular color control** — Title, Artist, Visualizer, Accent, Background, Secondary — all independently customizable
+- **OBS browser source** — Identical visuals with zero lag via SSE at 60fps
+- **Draggable overlay** — Click and drag anywhere to reposition
+- **Invisible until music plays** — Fades in on playback, fades out on pause
+- **Auto-updates** — Published via GitHub Releases, users update automatically
 
 ## Quick Start
 
 ### Prerequisites
 
-- **Node.js** v18 or newer
-- **Spotify Developer App** (free) — [create one here](https://developer.spotify.com/dashboard)
-- **VoiceMeeter** (optional) — for audio visualization, [download here](https://vb-audio.com/Voicemeeter/)
+- **Node.js** v18 or newer ([download](https://nodejs.org/))
+- **Spotify Developer App** ([dashboard](https://developer.spotify.com/dashboard))
+- **VoiceMeeter** (optional, for audio visualization) ([download](https://vb-audio.com/Voicemeeter/))
 
 ### Install & Run
 
 ```bash
+git clone https://github.com/TopiACutie/spotify-vorb.git
+cd spotify-vorb
 npm install
 npm start
 ```
 
-On first launch, enter your Spotify Client ID and Client Secret in Settings, then click Connect.
+### First Launch
 
-### Build Installer
+1. Open Settings (tray icon → Settings)
+2. Enter your Spotify Client ID and Client Secret
+3. Click "Connect" — authorize in your browser
+4. Play music on Spotify — the orb appears
 
-```bash
-npm run build
-```
+## Commands
 
-Creates `dist/Spotify VORB Setup X.X.X.exe` — a Windows NSIS installer.
+| Command | Description |
+|---|---|
+| `npm start` | Launch the desktop app |
+| `npm run build` | Package into NSIS installer |
+| `npm run build:publish` | Build and publish to GitHub Releases |
+| `npm run obs` | OBS-only server (no desktop window) |
 
 ## OBS Setup
 
 1. Add a **Browser** source in OBS
 2. URL: `http://127.0.0.1:3001`
-3. Size: 460 × 460
+3. Width: `520`, Height: `520`
 4. Check "Refresh browser when scene becomes active"
 
-## Configuration
+## Architecture
 
-All settings are stored in `%APPDATA%\Spotify VORB\config.json`. Spotify credentials (Client ID, Client Secret, tokens) are stored locally and never transmitted anywhere except directly to Spotify's API.
+```
+main.js          → Electron main process (tray, IPC, window, auto-updater)
+preload.js       → Context bridge (spotify.*, electronAPI.*)
+ui/renderer.js   → ALL overlay logic (visualizer, audio, UI, OBS mode)
+ui/settings.html → Settings panel
+core/spotify.js  → Spotify OAuth, polling, token refresh
+core/settings.js → Config persistence
+server/ui-server.js → Express HTTP/SSE server for OBS
+```
 
-## Auto-Updates
+## Tech Stack
 
-Set your update URL in Settings > Updates. The app checks `latest.yml` at that URL on startup and downloads new versions silently.
+- **Electron 28** — Desktop framework
+- **Vanilla JS** — No frameworks, no build tools
+- **Web Audio API** — Real-time audio analysis
+- **Canvas 2D** — 60fps visualizer rendering
+- **Express** — Local HTTP/SSE server for OBS
+- **electron-updater** — GitHub Releases auto-updates
+
+## Contributing
+
+1. Fork the repo
+2. Create a feature branch
+3. Test locally with `npm start`
+4. Build with `npm run build`
+5. Submit a PR
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
+MIT — free to use, modify, and distribute.
 
-## Disclaimer
+## Author
 
-This software is provided as-is. See [WARRANTY](WARRANTY) for full terms. Not affiliated with or endorsed by Spotify AB.
+[Sossi](https://github.com/TopiACutie)

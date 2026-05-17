@@ -1,38 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spotify Vorb</title>
-  <link rel="stylesheet" href="./style.css">
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spotify Vorb</title>
+<link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div id="orb" class="hidden">
-    <canvas id="visualizer"></canvas>
-    <div id="innerOrb">
-      <div id="coverWrap">
-        <img id="cover" src="" />
-      </div>
-        <div id="meta">
-          <div id="title">No Song</div>
-          <div id="artist">---</div>
-          <div id="album">---</div>
-          <div id="timeRow">
-            <span id="timeLabel">0:00 / 0:00</span>
-          </div>
-          <div id="progressWrap">
-            <div id="progressBar"></div>
-          </div>
-          <div id="spotifyStatusLine">Initializing...</div>
-          <div id="statusDots">
-            <span class="sdot" id="sdotConnected" title="Spotify Connected"></span>
-            <span class="sdot" id="sdotPlaying" title="Spotify Playing"></span>
-            <span class="sdot" id="sdotAudio" title="Audio Active"></span>
-          </div>
-        </div>
-    </div>
-  </div>
-  <script src="./renderer.js"></script>
+<div id="orb" class="hidden" style="-webkit-app-region:drag">
+<canvas id="visualizer"></canvas>
+<div id="innerOrb">
+<div id="coverWrap"><img id="cover" src="" /></div>
+<div id="meta">
+<div id="title">No Song</div>
+<div id="artist">---</div>
+<div id="album">---</div>
+<div id="timeRow"><span id="timeLabel">0:00 / 0:00</span></div>
+<div id="progressWrap"><div id="progressBar"></div></div>
+<div id="spotifyStatusLine">Initializing...</div>
+</div>
+</div>
+</div>
+<script src="./renderer.js"></script>
 </body>
 </html>

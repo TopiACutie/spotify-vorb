@@ -105,11 +105,14 @@ SETTINGS WINDOW:
     - Disconnect: Disconnect and prevent auto-reconnect
 
   COLORS:
-    - Primary: Main text color (default: white)
-    - Accent: Highlights (default: Spotify green)
+    - Title Text: Song title color
+    - Artist / Album Text: Artist and album name color
+    - Visualizer: Waveform color
+    - Accent / Progress: Progress bar and status accents
     - Background: Inner orb fill color
-    - Secondary: Artist/album text color
-    - Rainbow Mode: Static / Breathing / Switching
+    - Secondary Text: Time labels, status line
+    - Rainbow Mode: Static / Breathing / Switching / Wave
+      (overrides all colors when enabled)
 
   DISPLAY:
     - Toggle individual elements on/off:
@@ -147,7 +150,7 @@ To use VORB in your OBS stream:
 1. Keep the VORB app running in the background
 2. In OBS, add a new "Browser" source
 3. Set the URL to: http://127.0.0.1:3001
-4. Set Width: 460, Height: 460
+4. Set Width: 520, Height: 520
 5. Enable "Refresh browser when scene becomes active"
 6. You should see the VORB orb in OBS
 7. Position and resize as needed
@@ -161,28 +164,22 @@ OBS SETTINGS TIPS:
     (audio relay runs at a steady 60fps independent of the window)
 
 ===============================================================================
-AUTO-UPDATES SETUP
+AUTO-UPDATES
 ===============================================================================
 
-VORB supports automatic updates so you never need to manually uninstall and
-reinstall. Here's how to set it up:
+VORB automatically updates via GitHub Releases. When a new version is published
+with `npm run build:publish`, all users receive the update silently on next
+app launch. No manual download or reinstall needed.
 
-1. After building a new version with `npm run build`:
-   - Locate the installer: dist\Spotify VORB Setup X.X.X.exe
-   - Locate the metadata: dist\latest.yml
+For developers:
+1. Test locally: npm start
+2. Build installer: npm run build
+3. Test the installer
+4. Publish to GitHub: npm run build:publish
+   → Pushes to https://github.com/TopiACutie/spotify-vorb/releases
+   → All users auto-update on next launch
 
-2. Upload both files to any web server (or GitHub Releases):
-   - Place them in a folder accessible via HTTPS
-   - Example: https://your-server.com/updates/
-
-3. In VORB's Settings > Updates:
-   - Set "Update URL" to the URL of the folder
-   - Make sure "Auto-check on startup" is enabled
-
-4. On next startup (or clicking "Check for Updates" in the tray):
-   - The app compares its version against latest.yml
-   - If a newer version is found, it downloads silently
-   - The update installs automatically on next app quit
+⚠️ Never publish untested builds. Auto-updates are irreversible for end users.
 
 ===============================================================================
 BUILDING A STANDALONE INSTALLER
