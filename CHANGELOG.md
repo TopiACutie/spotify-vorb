@@ -1,6 +1,12 @@
 # Spotify VORB — Changelog
 
 
+## v2.12.3 (2026-05-17)
+Replace taskkill with proper single instance lock
+
+### Fixed
+- **Multiple instances could run simultaneously**: The old `taskkill` approach killed all VORB processes including itself, creating a race condition where two instances could start at the same time. Replaced with Electron's proper `requestSingleInstanceLock()` — if a second instance tries to start, it immediately quits and the first instance focuses its window. No more port conflicts, no more "already in use" errors.
+
 ## v2.12.2 (2026-05-16)
 Fix settings save clearing tokens, remove duplicate status check, sync settings window tokens
 

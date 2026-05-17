@@ -1,8 +1,6 @@
-const {app,BrowserWindow,Tray,Menu,Notification,ipcMain,nativeImage,desktopCapturer,session,dialog,shell}=require("electron"),path=require("path"),fs=require("fs"),{execFile,execFileSync}=require("child_process"),Spotify=require("./core/spotify"),Settings=require("./core/settings"),Voicemeeter=require("./core/voicemeeter"),UIServer=require("./server/ui-server"),log=require("./core/logger"),{autoUpdater}=require("electron-updater");
+const {app,BrowserWindow,Tray,Menu,Notification,ipcMain,nativeImage,desktopCapturer,session,dialog,shell}=require("electron"),path=require("path"),fs=require("fs"),{execFile}=require("child_process"),Spotify=require("./core/spotify"),Settings=require("./core/settings"),Voicemeeter=require("./core/voicemeeter"),UIServer=require("./server/ui-server"),log=require("./core/logger"),{autoUpdater}=require("electron-updater");
 let win,tray,settingsWin,splash,uninstallWin,trayMenu,currentNotification=null,isQuitting=false,overlayVisible=true,updateQueued=false,iconPath=path.join(__dirname,"assets","icon.ico");
-app.setName("Spotify VORB");app.setAppUserModelId("Spotify VORB");
-try{execFileSync("taskkill",["/F","/IM","Spotify VORB.exe","/T"],{stdio:"ignore",windowsHide:true})}catch{}
-app.commandLine.appendSwitch("disable-logging");const gotLock=app.requestSingleInstanceLock();if(!gotLock)app.quit();
+app.setName("Spotify VORB");app.setAppUserModelId("Spotify VORB");app.commandLine.appendSwitch("disable-logging");const gotLock=app.requestSingleInstanceLock();if(!gotLock){app.quit();process.exit(0)}app.on("second-instance",()=>{if(win){if(win.isMinimized())win.restore();if(!win.isVisible())win.show();win.focus()}});
 autoUpdater.autoDownload=true;autoUpdater.autoInstallOnAppQuit=true;
 autoUpdater.on("error",e=>{log.info("AutoUpdater","Error: "+(e?e.message:"unknown"))});
 autoUpdater.on("checking-for-update",()=>{log.info("AutoUpdater","Checking for updates...")});
