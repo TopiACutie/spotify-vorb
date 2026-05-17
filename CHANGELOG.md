@@ -1,5 +1,22 @@
 # Spotify VORB — Changelog
 
+## v3.0.1 (2026-05-17)
+Security audit, README fix, documentation polish
+
+### Fixed
+- **Broken README preview image**: Removed non-existent `assets/preview.png` reference that caused a 404 error on GitHub.
+- **Temp credential files**: Deleted `temp_cred.txt` and `temp_cred_out.txt` that were created during GitHub CLI authentication setup. These files are now covered by `.gitignore`.
+
+### Security Audit (v3.0.0 verified safe)
+- **No hardcoded secrets**: All credentials (Spotify Client ID, Client Secret, access/refresh tokens) are user-provided and stored locally in `%APPDATA%\Spotify VORB\config.json`.
+- **Client-side only**: No credentials, tokens, or personal data are transmitted anywhere except directly to Spotify's API (`accounts.spotify.com`, `api.spotify.com`).
+- **OBS server locked to localhost**: Express server bound to `127.0.0.1:3001` — not accessible from network.
+- **Credentials stripped from OBS endpoint**: `/settings` endpoint removes `accessToken`, `refreshToken`, `clientId`, and `clientSecret` before responding.
+- **No telemetry or analytics**: Zero external tracking, no data collection, no phone-home.
+- **contextIsolation enabled, nodeIntegration disabled**: Renderer process cannot access Node.js APIs directly.
+- **Build excludes sensitive files**: `dist/` and `settings/` excluded from installer package.
+- **`.gitignore` protects secrets**: `settings/`, `*.log`, `dist/`, `node_modules/` all excluded from version control.
+
 ## v3.0.0 (2026-05-17)
 Complete v3 release — major visualizer overhaul, granular color control, rainbow modes, draggable window, OBS improvements, and production-ready polish
 

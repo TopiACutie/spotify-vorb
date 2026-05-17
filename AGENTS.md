@@ -321,6 +321,8 @@ npm run build:publish
 ```
 This builds the installer, creates `latest.yml`, and pushes both to GitHub Releases. All users receive the update automatically.
 
+> **⚠️ Requires `GH_TOKEN`:** The `build:publish` script needs a GitHub Personal Access Token set as the `GH_TOKEN` environment variable. Generate one at Settings → Developer settings → Personal access tokens → Fine-grained tokens (scope: `contents:write`). Set it with: `$env:GH_TOKEN="ghp_..."` (PowerShell) or `set GH_TOKEN=ghp_...` (CMD). Alternatively, create releases manually via the GitHub web UI and upload `latest.yml` + the `.exe` installer.
+
 **⚠️ CRITICAL:** Never run `build:publish` without testing first. Auto-updates are irreversible for end users.
 
 ## What to Focus On (if continuing)

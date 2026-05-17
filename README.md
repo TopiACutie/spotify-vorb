@@ -8,8 +8,6 @@
 
 A translucent floating orb that sits on top of your screen and shows what song you're playing on Spotify — album art, title, artist — with a reactive circular waveform that pulses to the music. Doubles as an OBS browser source for streaming.
 
-![VORB Preview](assets/preview.png)
-
 ## Features
 
 - **Real-time audio visualization** — 6 visualizer styles (Spiky, Wavy, Rounded, Bars, Dots, Lines) with kick-reactive smooth curves
