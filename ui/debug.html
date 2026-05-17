@@ -4,101 +4,138 @@
 <meta charset="UTF-8">
 <title>VORB Debug — Spotify Connection</title>
 <style>
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Consolas,monospace;background:#0d0d0d;color:#e0e0e0;font-size:12px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-.header{padding:12px 16px;background:#151515;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.header h1{font-size:14px;font-weight:600;color:#fff}
-.header h1 span{color:#1DB954}
-.btn{padding:6px 14px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:.15s}
-.btn-primary{background:#1DB954;color:#000}.btn-primary:hover{background:#1ed760}
-.btn-secondary{background:#2a2a2a;color:#ccc;border:1px solid #3a3a3a}.btn-secondary:hover{background:#3a3a3a}
-.btn-danger{background:#e74c3c;color:#fff}.btn-danger:hover{background:#c0392b}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#e0e0e0;font-size:12px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.header{padding:14px 20px;background:#111;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.header h1{font-size:15px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px}
+.header h1 .dot{width:8px;height:8px;border-radius:50%;background:#1DB954;animation:pulse 2s ease-in-out infinite}
 .btn-row{display:flex;gap:8px}
-.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px;background:#111;border-bottom:1px solid #2a2a2a;flex-shrink:0}
-.status-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:10px 12px}
-.status-card .label{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.status-card .value{font-size:13px;font-weight:600}
-.status-card .value.ok{color:#1DB954}.status-card .value.err{color:#e74c3c}.status-card .value.warn{color:#f0ad4e}.status-card .value.idle{color:#666}
-.log-area{flex:1;overflow-y:auto;padding:8px 16px;font-family:Consolas,'Courier New',monospace;font-size:11px;line-height:1.6}
-.log-entry{padding:3px 0;border-bottom:1px solid #1a1a1a;display:flex;gap:8px}
-.log-entry .time{color:#444;white-space:nowrap;min-width:70px}
-.log-entry .type{font-weight:700;min-width:70px;text-transform:uppercase;font-size:10px;padding-top:1px}
-.log-entry .type.info{color:#3498db}.log-entry .type.success{color:#1DB954}.log-entry .type.error{color:#e74c3c}.log-entry .type.warn{color:#f0ad4e}.log-entry .type.data{color:#9b59b6}.log-entry .type.auth{color:#e67e22}
-.log-entry .msg{color:#bbb;word-break:break-all;flex:1}
-.log-entry .msg code{background:#1a1a1a;padding:1px 4px;border-radius:3px;color:#ddd;font-size:10px}
-.toolbar{padding:8px 16px;background:#151515;border-top:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.toolbar .filter{display:flex;gap:6px}
-.toolbar .filter label{font-size:10px;color:#666;display:flex;align-items:center;gap:3px;cursor:pointer}
-.toolbar .filter input{accent-color:#1DB954}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0d0d0d}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+.btn{padding:7px 14px;border:none;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit}
+.btn-primary{background:#1DB954;color:#000}.btn-primary:hover{background:#1ed760;transform:translateY(-1px)}
+.btn-secondary{background:#1a1a1a;color:#aaa;border:1px solid #333}.btn-secondary:hover{background:#222;color:#fff}
+.btn-danger{background:rgba(231,76,60,.12);color:#e74c3c;border:1px solid rgba(231,76,60,.2)}.btn-danger:hover{background:rgba(231,76,60,.22)}
+.btn:active{transform:translateY(0)!important}
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 20px;background:#0d0d0d;border-bottom:1px solid #1a1a1a;flex-shrink:0}
+.card{background:#141414;border:1px solid #222;border-radius:10px;padding:12px 14px;transition:border-color .2s}
+.card:hover{border-color:#333}
+.card .label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-weight:600}
+.card .value{font-size:13px;font-weight:600;font-family:'SF Mono',Consolas,monospace}
+.card .value.ok{color:#1DB954}.card .value.err{color:#e74c3c}.card .value.warn{color:#f0ad4e}.card .value.idle{color:#444}
+.card .sub{font-size:10px;color:#444;margin-top:3px;font-family:'SF Mono',Consolas,monospace}
+.test-result{margin:0 20px 10px;padding:10px 14px;background:#141414;border:1px solid #222;border-radius:8px;font-size:11px;display:none;font-family:'SF Mono',Consolas,monospace}
+.test-result.show{display:block}
+.test-result.success{border-color:rgba(29,185,84,.3);color:#1DB954}
+.test-result.error{border-color:rgba(231,76,60,.3);color:#e74c3c}
+.log-area{flex:1;overflow-y:auto;padding:6px 20px;font-family:'SF Mono',Consolas,monospace;font-size:11px;line-height:1.5}
+.log-entry{padding:4px 0;border-bottom:1px solid #111;display:flex;gap:10px;transition:background .1s}
+.log-entry:hover{background:rgba(255,255,255,.02)}
+.log-entry .time{color:#333;white-space:nowrap;min-width:65px;font-size:10px}
+.log-entry .badge{font-weight:700;min-width:55px;text-transform:uppercase;font-size:9px;padding:2px 6px;border-radius:4px;text-align:center;letter-spacing:.5px;height:fit-content;margin-top:1px}
+.log-entry .badge.info{background:rgba(52,152,219,.12);color:#3498db}
+.log-entry .badge.success{background:rgba(29,185,84,.12);color:#1DB954}
+.log-entry .badge.error{background:rgba(231,76,60,.12);color:#e74c3c}
+.log-entry .badge.warn{background:rgba(240,173,78,.12);color:#f0ad4e}
+.log-entry .badge.data{background:rgba(155,89,182,.12);color:#9b59b6}
+.log-entry .badge.auth{background:rgba(230,126,34,.12);color:#e67e22}
+.log-entry .msg{color:#999;word-break:break-all;flex:1;line-height:1.4}
+.log-entry .msg code{background:#1a1a1a;padding:1px 5px;border-radius:4px;color:#ccc;font-size:10px;border:1px solid #222}
+.toolbar{padding:10px 20px;background:#111;border-top:1px solid #222;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.toolbar .filter{display:flex;gap:8px;flex-wrap:wrap}
+.toolbar .filter label{font-size:10px;color:#555;display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 8px;border-radius:5px;transition:.15s;border:1px solid transparent}
+.toolbar .filter label:hover{color:#888;background:rgba(255,255,255,.03)}
+.toolbar .filter input{accent-color:#1DB954;width:13px;height:13px}
+.toolbar .filter label.active{color:#aaa;border-color:#333;background:rgba(255,255,255,.03)}
+.toolbar .meta{display:flex;align-items:center;gap:12px}
+.toolbar .meta span{font-size:10px;color:#333}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#222;border-radius:3px}
 </style>
 </head>
 <body>
 <div class="header">
-<h1><span>●</span> Spotify Connection Debug</h1>
+<h1><span class="dot"></span> Spotify Connection Debug</h1>
 <div class="btn-row">
-<button class="btn btn-primary" onclick="testAuth()">Test Auth</button>
-<button class="btn btn-secondary" onclick="forceReconnect()">Force Reconnect</button>
-<button class="btn btn-danger" onclick="clearLog()">Clear</button>
+<button class="btn btn-primary" onclick="testAuth()">⟳ Test Auth</button>
+<button class="btn btn-secondary" onclick="forceReconnect()">↻ Force Reconnect</button>
+<button class="btn btn-danger" onclick="clearLog()">✕ Clear</button>
 </div>
 </div>
-<div class="status-grid" id="statusGrid">
-<div class="status-card"><div class="label">Credentials</div><div class="value idle" id="sCreds">Checking...</div></div>
-<div class="status-card"><div class="label">Access Token</div><div class="value idle" id="sToken">Checking...</div></div>
-<div class="status-card"><div class="label">Connection</div><div class="value idle" id="sConn">Checking...</div></div>
-<div class="status-card"><div class="label">Last Poll</div><div class="value idle" id="sPoll">Waiting...</div></div>
+<div class="status-grid">
+<div class="card"><div class="label">Credentials</div><div class="value idle" id="sCreds">—</div><div class="sub" id="sCredsSub">Checking...</div></div>
+<div class="card"><div class="label">Access Token</div><div class="value idle" id="sToken">—</div><div class="sub" id="sTokenSub">Checking...</div></div>
+<div class="card"><div class="label">Connection</div><div class="value idle" id="sConn">—</div><div class="sub" id="sConnSub">Waiting...</div></div>
+<div class="card"><div class="label">Last Poll</div><div class="value idle" id="sPoll">—</div><div class="sub" id="sPollSub">No data yet</div></div>
 </div>
+<div class="test-result" id="testResult"></div>
 <div class="log-area" id="logArea"></div>
 <div class="toolbar">
 <div class="filter">
-<label><input type="checkbox" checked data-filter="info"> Info</label>
-<label><input type="checkbox" checked data-filter="success"> Success</label>
-<label><input type="checkbox" checked data-filter="error"> Error</label>
-<label><input type="checkbox" checked data-filter="warn"> Warn</label>
-<label><input type="checkbox" checked data-filter="data"> Data</label>
-<label><input type="checkbox" checked data-filter="auth"> Auth</label>
+<label class="active" data-filter="info"><input type="checkbox" checked> Info</label>
+<label class="active" data-filter="success"><input type="checkbox" checked> Success</label>
+<label class="active" data-filter="error"><input type="checkbox" checked> Error</label>
+<label class="active" data-filter="warn"><input type="checkbox" checked> Warn</label>
+<label class="active" data-filter="data"><input type="checkbox" checked> Data</label>
+<label class="active" data-filter="auth"><input type="checkbox" checked> Auth</label>
 </div>
-<span style="font-size:10px;color:#444" id="logCount">0 entries</span>
+<div class="meta">
+<span id="logCount">0 entries</span>
+<span id="autoScroll" style="cursor:pointer;color:#555" onclick="toggleAutoScroll()">⬇ Auto-scroll: ON</span>
+</div>
 </div>
 <script>
-let logEntries=[];
+let logEntries=[],autoScroll=true;
+function $(id){return document.getElementById(id)}
 function addLog(type,msg){
 const now=new Date().toLocaleTimeString('en-US',{hour12:false});
-const entry={time:now,type,msg};
-logEntries.push(entry);
-const area=document.getElementById("logArea");
-const div=document.createElement("div");
-div.className="log-entry";
-div.dataset.type=type;
-div.innerHTML=`<span class="time">${now}</span><span class="type ${type}">${type}</span><span class="msg">${msg}</span>`;
+logEntries.push({time:now,type,msg});
+const area=$("logArea"),div=document.createElement("div");
+div.className="log-entry";div.dataset.type=type;
+div.innerHTML=`<span class="time">${now}</span><span class="badge ${type}">${type}</span><span class="msg">${msg}</span>`;
 area.appendChild(div);
-area.scrollTop=area.scrollHeight;
-document.getElementById("logCount").textContent=logEntries.length+" entries";
+if(autoScroll)area.scrollTop=area.scrollHeight;
+$("logCount").textContent=logEntries.length+" entries";
 }
-function updateStatus(id,text,cls){const el=document.getElementById(id);el.textContent=text;el.className="value "+cls}
-function clearLog(){logEntries=[];document.getElementById("logArea").innerHTML="";document.getElementById("logCount").textContent="0 entries"}
-function testAuth(){window.electronAPI.debugTestAuth().then(r=>{addLog("auth","Test result: "+JSON.stringify(r))}).catch(e=>addLog("error","Test failed: "+e.message))}
+function updateStatus(id,text,cls,sub){const el=$(id);el.textContent=text;el.className="value "+cls;if(sub)$(id+"Sub").textContent=sub}
+function clearLog(){logEntries=[];$("logArea").innerHTML="";$("logCount").textContent="0 entries"}
+function toggleAutoScroll(){autoScroll=!autoScroll;$("autoScroll").textContent="⬇ Auto-scroll: "+(autoScroll?"ON":"OFF");$("autoScroll").style.color=autoScroll?"#555":"#333"}
+async function testAuth(){
+const btn=document.querySelector(".btn-primary");btn.disabled=true;btn.textContent="⏳ Testing...";
+try{
+const r=await window.electronAPI.debugTestAuth();
+const el=$("testResult");el.className="test-result show "+(r.ok?"success":"error");
+if(r.ok){el.innerHTML=`<strong>✓ Auth Valid</strong><br>Track: <code>${r.track}</code> | Artist: <code>${r.artist}</code><br>Playing: <code>${r.playing?"Yes":"No"}</code> | Device: <code>${r.device}</code>`;addLog("success","Auth test passed: "+r.track+" by "+r.artist)}
+else{el.innerHTML=`<strong>✕ Auth Failed</strong><br>${r.msg}`;addLog("error","Auth test failed: "+r.msg)}
+}catch(e){const el=$("testResult");el.className="test-result show error";el.innerHTML=`<strong>✕ Error</strong><br>${e.message}`;addLog("error","Test error: "+e.message)}
+btn.disabled=false;btn.textContent="⟳ Test Auth";
+}
 function forceReconnect(){window.electronAPI.debugForceReconnect();addLog("auth","Force reconnect triggered")}
-document.querySelectorAll(".filter input").forEach(cb=>{cb.addEventListener("change",()=>{const type=cb.dataset.filter;document.querySelectorAll(`.log-entry[data-type="${type}"]`).forEach(e=>{e.style.display=cb.checked?"":"none"})})});
+document.querySelectorAll(".filter input").forEach(cb=>{
+cb.addEventListener("change",()=>{
+const label=cb.closest("label");
+label.classList.toggle("active",cb.checked);
+const type=cb.dataset.filter;
+document.querySelectorAll(`.log-entry[data-type="${type}"]`).forEach(e=>{e.style.display=cb.checked?"":"none"});
+});
+});
 window.electronAPI.onDebugUpdate(d=>{
 if(d.type==="status"){
-if(d.creds!==undefined)updateStatus("sCreds",d.creds.ok?"Set ("+d.creds.id.slice(0,8)+"...)":"Not set",d.creds.ok?"ok":"err");
-if(d.token!==undefined)updateStatus("sToken",d.token.ok?"Valid (expires in "+d.token.expiresIn+"s)":"Missing/Expired",d.token.ok?"ok":"err");
-if(d.conn!==undefined)updateStatus("sConn",d.conn.connected?"Connected ("+d.conn.status+")":"Disconnected",d.conn.connected?"ok":"err");
-if(d.poll!==undefined)updateStatus("sPoll",d.poll.time,d.poll.ok?"ok":"warn");
+if(d.creds!==undefined)updateStatus("sCreds",d.creds.ok?"Set":"Not set",d.creds.ok?"ok":"err",d.creds.ok?"ID: "+d.creds.id.slice(0,8)+"...":"Enter in Settings");
+if(d.token!==undefined)updateStatus("sToken",d.token.ok?"Valid":"Missing",d.token.ok?"ok":"err",d.token.ok?"Expires in "+d.token.expiresIn+"s":"Re-authenticate needed");
+if(d.conn!==undefined)updateStatus("sConn",d.conn.connected?"Connected":"Disconnected",d.conn.connected?"ok":"err",d.conn.status||"No connection");
+if(d.poll!==undefined)updateStatus("sPoll",d.poll.time,d.poll.ok?"ok":"warn",d.poll.ok?"API responding":"No response");
 }
 if(d.type==="log")addLog(d.logType,d.message);
 if(d.type==="data"){
-const track=d.data.track||"None",artist=d.data.artist||"None",playing=d.data.isPlaying?"▶ Playing":"⏸ Paused",progress=d.data.progress?formatMs(d.data.progress):"--",dur=d.data.duration?formatMs(d.data.duration):"--";
-addLog("data",`Track: <code>${track}</code> | Artist: <code>${artist}</code> | ${playing} | ${progress}/${dur}`);
+const track=d.data.track||"None",artist=d.data.artist||"None",playing=d.data.isPlaying?"▶ Playing":"⏸ Paused",progress=d.data.progress?fmt(d.data.progress):"--",dur=d.data.duration?fmt(d.data.duration):"--";
+addLog("data",`<code>${track}</code> — <code>${artist}</code> | ${playing} | ${progress} / ${dur}`);
 }
 });
-function formatMs(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function fmt(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
 window.electronAPI.getDebugInit().then(d=>{
-if(d.creds)updateStatus("sCreds",d.creds.ok?"Set ("+d.creds.id.slice(0,8)+"...)":"Not set",d.creds.ok?"ok":"err");
-if(d.token)updateStatus("sToken",d.token.ok?"Valid (expires in "+d.token.expiresIn+"s)":"Missing/Expired",d.token.ok?"ok":"err");
-if(d.conn)updateStatus("sConn",d.conn.connected?"Connected":"Disconnected",d.conn.connected?"ok":"err");
-addLog("info","Debug window initialized");
+if(d.creds)updateStatus("sCreds",d.creds.ok?"Set":"Not set",d.creds.ok?"ok":"err",d.creds.ok?"ID: "+d.creds.id.slice(0,8)+"...":"Enter in Settings");
+if(d.token)updateStatus("sToken",d.token.ok?"Valid":"Missing",d.token.ok?"ok":"err",d.token.ok?"Token present":"Re-authenticate needed");
+if(d.conn)updateStatus("sConn",d.conn.connected?"Connected":"Disconnected",d.conn.connected?"ok":"err","Waiting for data...");
+addLog("info","Debug window initialized — monitoring Spotify connection");
 });
 </script>
 </body>

@@ -1,6 +1,20 @@
 # Spotify VORB — Changelog
 
 
+## v2.13.1 (2026-05-17)
+Add developer mode toggle, fix waveform cutoff, polish debug UI
+
+### Added
+- **Developer Mode toggle in Settings**: A new checkbox under Behavior > Developer Mode that gates the "Spotify Debug" tray menu item. When disabled (default), the debug option is hidden from the tray menu. Enable it to access the Spotify Connection Debug window for troubleshooting.
+- **Auto-scroll toggle in Debug window**: Click "Auto-scroll: ON/OFF" in the debug toolbar to pause/resume automatic scrolling of the log.
+
+### Changed
+- **Debug UI redesigned**: Professional card-based layout with color-coded badges, hover effects, monospace fonts for data, and a cleaner visual hierarchy. Status cards now show sub-text with additional context.
+- **Test Auth results displayed inline**: Auth test results now show in a dedicated result panel above the log with formatted track/artist/playing/device info, instead of just a raw JSON log entry.
+
+### Fixed
+- **Waveform bars clipped at window edges**: The visualizer's max radius and rest radius were too large for the 460×460 canvas, causing bars to extend beyond the window bounds and get cut off. Reduced `baseRadius` from 0.38 to 0.34, increased canvas padding from 24px to 56px, and adjusted `REST_RADIUS` from 148 to 130. Bars now stay fully within the visible area even at maximum spike amplitude.
+
 ## v2.13.0 (2026-05-17)
 Add Spotify Debug window with real-time connection monitoring
 
