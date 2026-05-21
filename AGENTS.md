@@ -84,6 +84,38 @@ Kicks (bass hits) get special treatment — the app tracks a rolling baseline of
 - **Minor** (3.0.0 → 3.1.0): big features, significant refactors
 - **Patch** (3.0.0 → 3.0.1): bug fixes, small additions, performance tweaks
 
+### Recent Changes (v3.5.1)
+
+- **Audio Debug window**: Real-time kick/bass detection debugger with sliders, live readouts, PASS/FAIL badges, save/reset with confirm modal. Auto-preview on slider change. Tray menu entry (Developer Mode required).
+- **Visualizer Fill toggle**: New "Visualizer Fill" setting in Appearance. Off by default; fills area inside viz ring when on.
+- **Poll watchdog**: Auto-recovery from 12+ consecutive Spotify API failures. Token refresh → force re-auth. No more silent death loops.
+- **Marquee text scroll**: Title/artist/album auto-scroll when too long, with pause at each end. Speed scales with text length.
+- **Title glow softened**: 8 shadow layers (4px→100px) for natural light-source look instead of boxy edges.
+- **Progress fade follows rainbow**: Progress bar fade gradient now matches accent hue in all rainbow modes.
+- **`getFillCache()` fixed**: Was producing faint black (`rgba(0.03)`) instead of proper white tint. Now uses regex.
+- **Tint auto-disables when glass off**: Prevents dark overlay when glass effect is disabled.
+- **Version badge dynamic**: Settings header reads `package.json` at runtime — no more hardcoded version strings.
+- **Black visualizer background fixed**: Broken fill color + tinted overlay when glass off. Both resolved.
+
+### Recent Changes (v3.5.0)
+
+- **Full code optimization pass**: Hot path compression across all files — kick/bass detection fine-tuned, per-frame allocations eliminated, DXGI suppression deduplicated
+- **Kick detection tightened**: Flux 0.02→0.025, energy 0.08→0.10, baseline 1.1→1.15x — fewer false triggers on vocals/mids
+- **Bass detection tightened**: Threshold 0.12→0.14 — reduces glow on non-bass content
+- **processAudio() optimized**: Unrolled sub-bass/bass loops, replaced reduce() with manual loop, cached getSmoothFactor()
+- **drawVisualizer() optimized**: Cached getVizProfile(), cached fill colors, combined bass shake random(), removed debug indicators
+- **File size reduction**: logger.js 42→5 lines, voicemeeter.js 15→2 lines, style.css 302→38 lines, splash.html 178→48 lines
+
+### Recent Changes (v3.4.15)
+
+- **Installer defaults to Program Files**: `C:\Program Files\Spotify VORB` with admin privileges, user settings auto-route to `%APPDATA%`
+- **Installer Welcome credits**: "Created by Sossi" now visible on Welcome screen footer
+- **Uninstaller no secondary popup**: `/SILENT` flag suppresses built-in Windows confirmation, custom UI handles confirmation only
+- **Uninstaller runtime error fixed**: Uses separate `TForm` for confirmation instead of uninitialized `UninstallProgressForm`
+- **Install path memory cleared**: `UsePreviousAppDir=no` forces default path on every install
+- **Inno Setup 6 compatibility**: Removed unsupported `Transparent`, `Smooth`, `FileNameLabel` references from uninstaller
+- **Duplicate code removed**: Redundant `usDone` block in uninstaller eliminated
+
 ### When you make changes
 
 **Every time** you modify code, you MUST do all four:
@@ -98,6 +130,10 @@ Kicks (bass hits) get special treatment — the app tracks a rolling baseline of
 4. **Rebuild and publish** — run `npm run build:publish` to build and push to GitHub Releases. This triggers auto-updates for all users.
 
 > **⚠️ ORDER MATTERS:** Always fill in the changelog BEFORE running `npm run build`. The build reads the version from `package.json` and creates `latest.yml` for auto-updates. If you build before filling in the changelog, users won't know what changed. The correct order is: **code changes → bump version → fill changelog → build → publish**.
+
+> **⚠️ MANDATORY — NO EXCEPTIONS:** Every single change, no matter how small, requires a changelog entry. This is not optional. Skipping it breaks the auto-update pipeline and leaves users in the dark. If you are an AI agent, this is part of your task completion criteria — do not declare a task done without updating the changelog.
+
+> **⚠️ CHANGELOG PRESERVATION — NEVER DELETE HISTORY:** The changelog is an append-only historical record. When adding new entries, **always insert at the top** and **never delete, overwrite, or truncate** existing entries. The `npm run new-version` script handles this correctly by inserting a template at the top. If you ever need to edit CHANGELOG.md manually, only ever add new content — never remove old versions. The entire version history from v1.0.0 onward must be preserved indefinitely. If you accidentally lose history, you MUST restore it from backups, git history, or GitHub Releases before proceeding.
 
 > **⚠️ AUTO-UPDATES ARE LIVE:** Every `npm run build:publish` pushes a new release to GitHub. All users with the app installed will receive the update automatically on next launch. **Never publish untested or broken builds.** Test locally first (`npm start`), then build (`npm run build`), test the installer, then publish (`npm run build:publish`).
 
@@ -204,36 +240,45 @@ Key: Audio processing runs on `setInterval(16)` so it keeps sending data to OBS 
 ## Smoothing System
 
 ```
-getSmoothFactor(i, rising) — per-bin attack/release (musical reactivity):
-  Sub-bass (0-1):   attack 0.95, release 0.08  ← Kicks: sudden/hard reactivity
-  Bass (2-5):       attack 0.85, release 0.12  ← Bass/808: rumble/shake reactivity
-  Low-mid (6-13):   attack 0.70, release 0.15  ← Vocals/Melody: low reactivity (smooth)
-  Mid (14-29):      attack 0.80, release 0.10  ← Loud/Screamed Vocals: moderate reactivity
-  High-mid (30-59): attack 0.88, release 0.08  ← Hats/Snares: high reactivity
-  High (60+):       attack 0.85, release 0.10  ← Hats/Snares: high reactivity
+getSmoothFactor(i, rising) — per-bin attack/release (reactivity hierarchy):
+  Sub-bass (0):     attack 0.95, release 0.08  ← Kicks: MOST bounce, sudden/hard reactivity
+  Bass (1-2):       attack 0.90, release 0.10  ← Bass/808: strong rumble, glow trigger
+  Low-mid (3-5):    attack 0.82, release 0.14  ← Upper bass: medium reactivity
+  Low-mid (6-13):   attack 0.60, release 0.20  ← Melody/Soft Vocals: LEAST bounce, smooth
+  Mid (14-29):      attack 0.72, release 0.15  ← Loud Vocals: medium-low reactivity
+  High-mid (30-59): attack 0.85, release 0.10  ← Snares/Mids: MEDIUM bounce, reactive
+  High (60+):       attack 0.78, release 0.12  ← High Hats: subtle, crisp
 
-getBinGain(i) — frequency gain compensation:
-  0-1:   3.5    ← Sub-bass kicks (punchy, dominant)
-  2-5:   2.0    ← Bass/808 (strong rumble)
-  6-13:  1.8    ← Vocals/Melody (subtle, smooth)
-  14-29: 1.5    ← Loud/Screamed Vocals (moderate presence)
-  30-59: 1.8    ← Hats/Snares (bright, reactive)
-  60+:   1.6    ← High hats/cymbals (crisp reactivity)
+getBinGain(i) — frequency gain compensation (bounce hierarchy):
+  0:     3.5    ← Kicks: MOST bounce (punchy, dominant)
+  1-2:   2.8/2.0 ← Bass/808: strong rumble (glow trigger)
+  3-5:   2.0→1.2 ← Upper bass transition
+  6-13:  1.2    ← Melody/Soft Vocals: LEAST bounce (smooth, subtle)
+  14-29: 1.5    ← Loud Vocals: medium-low presence
+  30-59: 1.8    ← Snares/Mids: MEDIUM bounce (bright, reactive)
+  60+:   1.3    ← High Hats: subtle, crisp
 
 Noise gate: raw < 0.02 → barSmoothing *= 0.82 (immediate decay)
 
-Kick detection:
-  lowAvg = mean(barSmoothing[0..1])
-  lowEnergyBaseline += (lowAvg - baseline) * 0.012
-  if lowAvg > baseline * 1.65 && lowAvg > 0.18 → kickPulse = 1.0
-  kickPulse *= 0.85 each frame
-  kickBoost = 1 + kickPulse * 0.045
+Kick detection (onset detection on raw FFT, bins 0-1 = 0-344Hz):
+  kickEnergy = mean(raw[0..1])
+  kickFlux = kickEnergy - prevKickEnergy
+  if kickFlux > 0.025 && kickEnergy > 0.10 && kickEnergy > kickAvg*1.15 → kickPulse = 1.0
+  kickPulse *= 0.88 each frame
+  kickScale = 1 + kickPulse * 0.025  ← quick outward "kick"
 
-Bass detection:
-  bassAvg = mean(barSmoothing[2..5])
-  bassBaseline += (bassAvg - baseline) * 0.008
-  bassExcess tracks positive deviation
-  bassScale = 1 + (bassExcess > 0.03 ? bassExcess * 0.35 : 0)
+Bass detection (running average on raw FFT, bins 0-2 = 0-516Hz):
+  bassAvg = mean(raw[0..2])
+  if bassAvg > 0.14 → bassExcess tracks upward with 0.2 smoothing
+  bassExcess *= 0.92 each frame (slow decay for sustained 808)
+  bassScale = 1 + (bassExcess > 0.03 ? bassExcess * 0.15 : 0)  ← sustained glow/vibration
+
+Combined scale = kickScale * bassScale (max ~1.05, subtle)
+
+Style-specific responses:
+  Spiky/Wavy: glow alpha +0.10/+0.08 on kick/bass, lineWidth +6/+5 on kick/bass
+  Rounded: glow radius +10/+12, alpha +0.15/+0.12, lineWidth +10/+12
+  Bars/Dots/Lines: radius offset +6/+7, alpha +0.15 on kick/bass
 ```
 
 ## Canvas Rendering
@@ -248,9 +293,9 @@ Bass detection:
 - URL: `http://127.0.0.1:3001`
 - The browser source runs the same `index.html` + `renderer.js` in "OBS mode" (no `electronAPI`)
 - SSE (`/audio-stream`) pushes 128 smoothed byte values at ~60fps
-- HTTP polling (`/audio`) every 100ms as silent fallback
-- `/current` polled every 100ms for track data
-- `/settings` polled every 500ms for theme/display changes
+- HTTP polling (`/audio`) every 200ms as silent fallback
+- `/current` polled every 500ms for track data
+- `/settings` polled every 2000ms for theme/display changes
 - Bar smoothing happens ONLY on the Electron side: `barSmoothing.map(v => Math.round(v*255))` is sent, OBS does `barSmoothing[i] = dataArray[i] / 255` (direct assignment, no re-smoothing)
 - **Fallback message**: If VORB desktop app isn't running, OBS shows "VORB desktop app is not running" for 3 seconds, then fades out. Only shown once per tab load (sessionStorage).
 
@@ -291,37 +336,59 @@ Here's the drill:
 
 ```
 dist/
-  Spotify VORB Setup X.X.X.exe    — NSIS installer
-  latest.yml                       — electron-updater metadata
-  win-unpacked/                    — portable unpacked build
+  Spotify VORB Setup X.X.X.exe    — Inno Setup installer (custom branded)
+  win-unpacked/                    — portable unpacked build (intermediate)
+  builder-debug.yml                — electron-builder debug info
 ```
 
 ### Dist Retention Policy
 
-`npm run build` automatically runs `scripts/clean-dist.js` after `electron-builder` finishes. It keeps only the **latest 3 versions** (the .exe + .blockmap pair for each). Older builds are deleted. This prevents `dist/` from accumulating every build ever made. If you need to keep a specific build archive it elsewhere before running build.
+`npm run build` automatically runs `scripts/clean-dist.js` after the build finishes. It keeps only the **latest 3 unique versions** (.exe files). Older builds are deleted. This prevents `dist/` from accumulating every build ever made.
+
+**Same-version overwrite:** Building the same version multiple times overwrites the existing `.exe` directly. The clean-dist script counts unique versions, not total files.
+
+If you need to keep a specific build archive, copy it elsewhere before running build.
 
 ### Installer Safety
 
-The NSIS installer replaces app binaries in `Program Files\` but **never touches** `%APPDATA%\Spotify VORB\` (config.json, debug.log, auth tokens). Running an installer over an existing install is safe — settings survive.
+The Inno Setup installer installs to `%LOCALAPPDATA%\Spotify VORB\` (no admin required) but **never touches** `%APPDATA%\Spotify VORB\` (config.json, debug.log, auth tokens). Running an installer over an existing install is safe — settings survive.
 
-The uninstaller (accessible via Add/Remove Programs or tray menu) offers options to:
-- **Keep settings** — preserves config.json, auth tokens, and logs for future reinstalls
-- **Clear cached data** — removes temporary files and cached album art
-- **Submit feedback** — optional feedback textarea shown during uninstall
+The installer automatically kills any running VORB processes before installing to prevent file-in-use errors.
 
-A custom NSIS script (`scripts/installer.nsh`) handles cleanup of registry entries, shortcuts, and ensures the running process is killed before file removal.
+The uninstaller (accessible via Add/Remove Programs or tray menu) features a custom dark-themed UI matching the installer:
+1. **Confirm screen** — "Are you sure you want to uninstall Spotify VORB?" with a "Keep my settings and preferences" checkbox (checked by default)
+2. **Complete screen** — "Spotify VORB has been uninstalled successfully" with "Thank you for using VORB!"
+
+A custom Inno Setup script (`scripts/installer.iss`) handles installation, shortcuts, registry entries, and the custom uninstaller UI.
+
+### Build Requirements
+
+- **Inno Setup 6** — required for building installers. Install via `winget install JRSoftware.InnoSetup` or download from https://jrsoftware.org/isdl.php
+- The build script (`scripts/build-inno.js`) automatically detects Inno Setup in common locations
+- NSIS script (`scripts/installer.nsh`) is kept as backup; use `npm run build:nsis` to build with NSIS instead
 
 ## Auto-Updates
 
-Configured via `electron-updater` with a `github` provider (`owner: TopiACutie`, `repo: spotify-vorb`). On startup, the app checks for a newer release on GitHub. If found, it downloads silently and installs on next quit.
+Configured via `electron-updater` with a `generic` provider pointing to GitHub Releases (`https://github.com/TopiACutie/spotify-vorb/releases/latest/download/`). On startup, the app fetches `latest.yml` from the latest release, compares versions, and downloads the new installer automatically. Installs on next quit.
+
+**How it works:**
+1. App fetches `latest.yml` from GitHub Releases
+2. Parses version, SHA512 hash, and file size
+3. If version > current, downloads the `.exe` from the same release
+4. Verifies SHA512 hash matches
+5. Runs the installer silently on quit
+
+This works with **any installer type** (Inno Setup, NSIS, etc.) — the updater only cares about the `latest.yml` metadata.
 
 **Publishing a new release:**
 ```bash
 npm run build:publish
 ```
-This builds the installer, creates `latest.yml`, and pushes both to GitHub Releases. All users receive the update automatically.
+This builds the installer, generates `latest.yml`, creates/updates the GitHub Release, and uploads both files. All users receive the update automatically.
 
-> **⚠️ Requires `GH_TOKEN`:** The `build:publish` script needs a GitHub Personal Access Token set as the `GH_TOKEN` environment variable. Generate one at Settings → Developer settings → Personal access tokens → Fine-grained tokens (scope: `contents:write`). Set it with: `$env:GH_TOKEN="ghp_..."` (PowerShell) or `set GH_TOKEN=ghp_...` (CMD). Alternatively, create releases manually via the GitHub web UI and upload `latest.yml` + the `.exe` installer.
+> **⚠️ Requires GitHub CLI (`gh`):** Install from https://cli.github.com/ or run `winget install GitHub.cli`. Alternatively, set `GH_TOKEN` env var, or upload files manually via the GitHub web UI.
+
+> **Manual upload:** Go to https://github.com/TopiACutie/spotify-vorb/releases/new → create tag `vX.X.X` → upload `Spotify VORB Setup X.X.X.exe` + `latest.yml`.
 
 **⚠️ CRITICAL:** Never run `build:publish` without testing first. Auto-updates are irreversible for end users.
 

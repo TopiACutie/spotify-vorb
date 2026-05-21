@@ -1,15 +1,18 @@
 {
   "name": "spotify-vorb",
-  "version": "3.0.1",
+  "version": "3.6.1",
   "description": "Spotify VORB - Desktop audio visualizer and overlay",
+  "license": "SEE LICENSE IN LICENSE",
   "author": "Sossi",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "obs": "electron . --obs-only",
-    "build": "electron-builder && node scripts/clean-dist.js",
-    "build:publish": "electron-builder --publish always && node scripts/clean-dist.js",
+    "build": "electron-builder --dir && node scripts/build-inno.js && node scripts/clean-dist.js",
+    "build:publish": "electron-builder --dir && node scripts/build-inno.js && node scripts/publish.js && node scripts/clean-dist.js",
     "build:dir": "electron-builder --dir",
+    "build:nsis": "electron-builder && node scripts/clean-dist.js",
+    "publish": "node scripts/publish.js",
     "new-version": "node scripts/new-version.js"
   },
   "dependencies": {
@@ -33,7 +36,7 @@
       "!settings"
     ],
     "win": {
-      "target": "nsis",
+      "target": "dir",
       "icon": "assets/icon.ico",
       "legalTrademarks": "",
       "requestedExecutionLevel": "asInvoker",
@@ -43,20 +46,6 @@
       "fileAssociations": [],
       "extraResources": [],
       "publisherName": "Sossi"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "installerIcon": "assets/icon.ico",
-      "uninstallerIcon": "assets/icon.ico",
-      "deleteAppDataOnUninstall": false,
-      "perMachine": true,
-      "allowElevation": true,
-      "include": "scripts/installer.nsh",
-      "license": "LICENSE",
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "shortcutName": "Spotify VORB"
     },
     "publish": {
       "provider": "github",

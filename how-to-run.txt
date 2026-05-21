@@ -92,7 +92,6 @@ Right-click it for options:
   - Reload Spotify Auth: Generate a fresh Spotify token
   - Disconnect Spotify: Disconnect and stop auto-reconnecting
   - Check for Updates: Manually check for a newer version
-  - Uninstall VORB...: Remove the application
   - Quit: Exit the app completely
 
 SETTINGS WINDOW:
@@ -189,11 +188,18 @@ To package VORB as a Windows installer (.exe):
 
   npm run build
 
+Requirements:
+  - Inno Setup 6 installed (download: https://jrsoftware.org/isdl.php)
+
 This creates:
-  dist\Spotify VORB Setup X.X.X.exe    — NSIS installer
+  dist\Spotify VORB Setup X.X.X.exe    — Inno Setup installer
   dist\latest.yml                       — Auto-update metadata
 
-You can run the built app without Node.js once installed.
+The installer defaults to %LOCALAPPDATA%\Spotify VORB\ (no admin required).
+App data (settings, logs, auth tokens) is stored in %APPDATA%\Spotify VORB\.
+Running the installer over an existing install is safe — settings survive.
+
+The installer automatically kills any running VORB processes before installing.
 
 ===============================================================================
 TROUBLESHOOTING
@@ -282,7 +288,7 @@ COMMANDS REFERENCE
 
   npm install     - Install all dependencies (first time)
   npm start       - Launch the VORB app (full desktop mode)
-  npm run build   - Package into NSIS installer (dist/ folder)
+  npm run build   - Package into Inno Setup installer (dist/ folder)
   npm run obs     - Run just the OBS server (no Electron UI)
   npm run build:dir - Package into unpacked directory (for testing)
 

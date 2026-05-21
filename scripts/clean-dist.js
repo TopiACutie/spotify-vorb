@@ -3,7 +3,7 @@ const path = require("path");
 
 const distDir = path.join(__dirname, "..", "dist");
 
-const EXE_PATTERN = /^Spotify VORB Setup (\d+\.\d+\.\d+)\.exe$/;
+const EXE_PATTERN = /^Spotify VORB Setup (\d+\.\d+\.\d+)(?: \((\d+)\))?\.exe$/;
 
 function parseVersion(v) {
   return v.split(".").map(Number);
@@ -25,31 +25,49 @@ function clean() {
   }
 
   const entries = fs.readdirSync(distDir, { withFileTypes: true });
+
+  // Parse all EXEs
   const exes = entries
     .filter(e => e.isFile() && EXE_PATTERN.test(e.name))
-    .map(e => ({ name: e.name, version: e.name.match(EXE_PATTERN)[1] }))
-    .sort((a, b) => versionGt(a.version, b.version) ? -1 : 1);
+    .map(e => {
+      const m = e.name.match(EXE_PATTERN);
+      return { name: e.name, version: m[1], copy: m[2] ? parseInt(m[2]) : 0 };
+    });
 
-  if (exes.length <= 3) {
-    console.log(`clean-dist: ${exes.length} builds found, no cleanup needed`);
-    return;
+  // Step 1: For each version, keep only the latest copy (highest copy number, or the base if no copies)
+  const byVersion = {};
+  for (const e of exes) {
+    if (!byVersion[e.version]) byVersion[e.version] = [];
+    byVersion[e.version].push(e);
   }
 
-  const keep = new Set();
   const toDelete = [];
 
-  for (let i = 0; i < 3 && i < exes.length; i++) {
-    keep.add(exes[i].name);
-    keep.add(exes[i].name + ".blockmap");
+  for (const [ver, copies] of Object.entries(byVersion)) {
+    if (copies.length > 1) {
+      // Prefer the base version (copy=0) over numbered copies
+      copies.sort((a, b) => a.copy - b.copy); // 0 first, then 1, 2, 3...
+      const keep = copies[0];
+      for (let i = 1; i < copies.length; i++) {
+        toDelete.push(copies[i].name);
+      }
+      console.log(`  deduped ${ver}: kept "${keep.name}", removed ${copies.length - 1} older copy(ies)`);
+    }
   }
 
-  for (const e of entries) {
-    if (!e.isFile()) continue;
-    if (e.name === "latest.yml" || e.name === "builder-debug.yml") continue;
-    if (keep.has(e.name)) continue;
-    toDelete.push(e.name);
+  // Step 2: Keep only the latest 3 unique versions
+  const uniqueVersions = Object.keys(byVersion).sort((a, b) => versionGt(a, b) ? -1 : 1);
+
+  if (uniqueVersions.length > 3) {
+    const keepVersions = new Set(uniqueVersions.slice(0, 3));
+    for (const e of exes) {
+      if (!keepVersions.has(e.version)) {
+        toDelete.push(e.name);
+      }
+    }
   }
 
+  // Delete files
   for (const file of toDelete) {
     const filePath = path.join(distDir, file);
     try {
@@ -60,7 +78,8 @@ function clean() {
     }
   }
 
-  console.log(`clean-dist: kept ${keep.size} files, removed ${toDelete.length} old builds`);
+  const remaining = Object.keys(byVersion).length;
+  console.log(`clean-dist: ${remaining} unique version(s) remaining`);
 }
 
 clean();

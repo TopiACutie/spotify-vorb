@@ -48,15 +48,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .toolbar .filter label.active{color:#aaa;border-color:#333;background:rgba(255,255,255,.03)}
 .toolbar .meta{display:flex;align-items:center;gap:12px}
 .toolbar .meta span{font-size:10px;color:#333}
+.titlebar{height:32px;background:#0a0a0a;display:flex;align-items:center;justify-content:space-between;padding:0 8px;-webkit-app-region:drag;flex-shrink:0;user-select:none}.titlebar-title{font-size:12px;color:#666;font-family:'Segoe UI',sans-serif}.titlebar-buttons{display:flex;gap:0;-webkit-app-region:no-drag}.titlebar-btn{width:46px;height:32px;border:none;background:transparent;color:#666;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}.titlebar-btn:hover{background:#333;color:#fff}.titlebar-btn.close:hover{background:#e81123;color:#fff}.titlebar-btn svg{width:10px;height:10px;stroke:currentColor;stroke-width:1.5;fill:none}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#222;border-radius:3px}
 </style>
 </head>
 <body>
+<div class="titlebar"><span class="titlebar-title">VORB Debug</span><div class="titlebar-buttons"><button class="titlebar-btn" onclick="window.electronAPI?.winMinimize()" title="Minimize"><svg viewBox="0 0 10 10"><line x1="1" y1="5" x2="9" y2="5"/></svg></button><button class="titlebar-btn" onclick="window.electronAPI?.winMaximize()" title="Maximize"><svg viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7" rx="1"/></svg></button><button class="titlebar-btn close" onclick="window.electronAPI?.winClose()" title="Close"><svg viewBox="0 0 10 10"><line x1="1" y1="1" x2="9" y2="9"/><line x1="9" y1="1" x2="1" y2="9"/></svg></button></div></div>
 <div class="header">
 <h1><span class="dot"></span> Spotify Connection Debug</h1>
 <div class="btn-row">
 <button class="btn btn-primary" onclick="testAuth()">⟳ Test Auth</button>
 <button class="btn btn-secondary" onclick="forceReconnect()">↻ Force Reconnect</button>
+<button class="btn btn-secondary" onclick="checkUpdates()">↑ Updates</button>
+<button class="btn btn-secondary" id="forceShowBtn" onclick="toggleForceShow()">👁 Force Show UI</button>
 <button class="btn btn-danger" onclick="clearLog()">✕ Clear</button>
 </div>
 </div>
@@ -83,18 +87,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 <script>
-let logEntries=[],autoScroll=true;
+let logEntries=[],autoScroll=true,activeFilters=new Set(["info","success","error","warn","data","auth"]);
 function $(id){return document.getElementById(id)}
-function addLog(type,msg){
-const now=new Date().toLocaleTimeString('en-US',{hour12:false});
-logEntries.push({time:now,type,msg});
-const area=$("logArea"),div=document.createElement("div");
-div.className="log-entry";div.dataset.type=type;
-div.innerHTML=`<span class="time">${now}</span><span class="badge ${type}">${type}</span><span class="msg">${msg}</span>`;
-area.appendChild(div);
-if(autoScroll)area.scrollTop=area.scrollHeight;
-$("logCount").textContent=logEntries.length+" entries";
-}
+function renderLogs(){const area=$("logArea");area.innerHTML="";logEntries.forEach(entry=>{if(!activeFilters.has(entry.type))return;const div=document.createElement("div");div.className="log-entry";div.dataset.type=entry.type;div.innerHTML=`<span class="time">${entry.time}</span><span class="badge ${entry.type}">${entry.type}</span><span class="msg">${entry.msg}</span>`;area.appendChild(div)});if(autoScroll)area.scrollTop=area.scrollHeight;$("logCount").textContent=logEntries.length+" entries"}
+function addLog(type,msg){if(!activeFilters.has(type))return;const now=new Date().toLocaleTimeString('en-US',{hour12:false});logEntries.push({time:now,type,msg});const area=$("logArea"),div=document.createElement("div");div.className="log-entry";div.dataset.type=type;div.innerHTML=`<span class="time">${now}</span><span class="badge ${type}">${type}</span><span class="msg">${msg}</span>`;area.appendChild(div);if(autoScroll)area.scrollTop=area.scrollHeight;$("logCount").textContent=logEntries.length+" entries"}
 function updateStatus(id,text,cls,sub){const el=$(id);el.textContent=text;el.className="value "+cls;if(sub)$(id+"Sub").textContent=sub}
 function clearLog(){logEntries=[];$("logArea").innerHTML="";$("logCount").textContent="0 entries"}
 function toggleAutoScroll(){autoScroll=!autoScroll;$("autoScroll").textContent="⬇ Auto-scroll: "+(autoScroll?"ON":"OFF");$("autoScroll").style.color=autoScroll?"#555":"#333"}
@@ -109,13 +105,18 @@ else{el.innerHTML=`<strong>✕ Auth Failed</strong><br>${r.msg}`;addLog("error",
 btn.disabled=false;btn.textContent="⟳ Test Auth";
 }
 function forceReconnect(){window.electronAPI.debugForceReconnect();addLog("auth","Force reconnect triggered")}
-document.querySelectorAll(".filter input").forEach(cb=>{
-cb.addEventListener("change",()=>{
+async function checkUpdates(){addLog("info","Checking for updates...");try{const r=await window.electronAPI.checkForUpdates();if(r.status==="up-to-date")addLog("success","No updates found — running latest version (v"+(r.version||"")+")");else if(r.status==="downloading")addLog("success","Update v"+r.version+" found, downloading...");else if(r.status==="downloaded")addLog("success","Update v"+r.version+" downloaded — restart to install");else if(r.status==="skipped")addLog("info","Update v"+r.version+" skipped by user");else if(r.status==="error")addLog("error","Update check failed: "+(r.message||"unknown"));else if(r.status==="timeout")addLog("warn","Update check timed out after 15s");else if(r.status==="dev-mode")addLog("warn","Update checks unavailable in development mode");else if(r.status==="pending")addLog("warn","Update check already in progress")}catch(e){addLog("error","Update check error: "+e.message)}}
+let forceShowActive=false;
+function toggleForceShow(){forceShowActive=!forceShowActive;window.electronAPI.setForceShowUI(forceShowActive);$("forceShowBtn").textContent=forceShowActive?"👁 Force Show: ON":"👁 Force Show UI";$("forceShowBtn").style.background=forceShowActive?"rgba(29,185,84,.2)":"";addLog("info","Force show UI "+(forceShowActive?"enabled":"disabled"))}
+document.querySelector(".filter").addEventListener("click",e=>{
+const cb=e.target.closest("input[type='checkbox']");if(!cb)return;
+setTimeout(()=>{
 const label=cb.closest("label");
+const type=label.dataset.filter;
+if(cb.checked)activeFilters.add(type);else activeFilters.delete(type);
 label.classList.toggle("active",cb.checked);
-const type=cb.dataset.filter;
-document.querySelectorAll(`.log-entry[data-type="${type}"]`).forEach(e=>{e.style.display=cb.checked?"":"none"});
-});
+renderLogs();
+},0);
 });
 window.electronAPI.onDebugUpdate(d=>{
 if(d.type==="status"){
@@ -136,6 +137,9 @@ if(d.creds)updateStatus("sCreds",d.creds.ok?"Set":"Not set",d.creds.ok?"ok":"err
 if(d.token)updateStatus("sToken",d.token.ok?"Valid":"Missing",d.token.ok?"ok":"err",d.token.ok?"Token present":"Re-authenticate needed");
 if(d.conn)updateStatus("sConn",d.conn.connected?"Connected":"Disconnected",d.conn.connected?"ok":"err","Waiting for data...");
 addLog("info","Debug window initialized — monitoring Spotify connection");
+window.electronAPI.getLastPoll().then(p=>{
+if(p&&p.statusText)updateStatus("sPoll",p.connected?"Active":"Inactive",p.connected?"ok":"warn",p.statusText||"No data");
+}).catch(()=>{})
 });
 </script>
 </body>

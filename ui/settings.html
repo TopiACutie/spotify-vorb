@@ -5,152 +5,309 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VORB Settings</title>
 <style>
-:root{--bg:#1a1a1a;--surface:#252525;--surface2:#2e2e2e;--text:#e0e0e0;--text-dim:#999;--accent:#1DB954;--border:#3a3a3a;--danger:#e74c3c}
+:root{--bg:#141414;--surface:#1e1e1e;--surface2:#282828;--surface3:#333;--text:#e8e8e8;--text-dim:#888;--accent:#1DB954;--border:#3a3a3a;--danger:#e74c3c;--radius:8px}
 *{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow:hidden}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:13px;display:flex;flex-direction:column}
-.header{padding:20px 24px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
-.header h1{font-size:18px;font-weight:600;letter-spacing:.5px}
-.header .badge{font-size:10px;background:var(--accent);color:#000;padding:2px 8px;border-radius:10px;font-weight:600}
-.content{padding:16px 24px 24px;overflow-y:auto;flex:1}
-.section{margin-bottom:20px}
-.section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;gap:12px;border-radius:6px;transition:background .15s}
-.setting-row:hover{background:rgba(255,255,255,.03)}
-.setting-row label{flex:1;font-size:13px}
-.setting-row .desc{font-size:11px;color:var(--text-dim);margin-top:2px}
-.color-row{display:flex;align-items:center;gap:10px;padding:6px 0}
-.color-row label{flex:1;font-size:13px}
-.color-row input[type="color"]{width:40px;height:32px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);cursor:pointer;padding:2px}
-.color-row input[type="text"]{width:120px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:12px;font-family:monospace}
-input[type="range"]{width:120px;accent-color:var(--accent);height:6px;-webkit-appearance:none;appearance:none;background:var(--surface2);border-radius:3px;outline:none;cursor:pointer}
-input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);border:2px solid #fff;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4)}
-input[type="range"]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);border:2px solid #fff;cursor:pointer}
-input[type="number"]{width:70px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:12px}
-select{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;min-width:150px;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.header{padding:18px 24px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.header h1{font-size:17px;font-weight:600;letter-spacing:.5px;display:flex;align-items:center;gap:10px}
+.header .badge{font-size:10px;background:var(--surface3);color:var(--text-dim);padding:2px 8px;border-radius:10px;font-weight:500}
+.header .badge.accent{background:var(--accent);color:#000;font-weight:600}
+.status-bar{padding:8px 24px;background:var(--surface);border-bottom:1px solid var(--border);font-size:11px;color:var(--text-dim);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.status-bar .dot{width:7px;height:7px;border-radius:50%;background:#555;transition:.3s}
+.status-bar .dot.on{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.content{padding:16px 24px 20px;overflow-y:auto;flex:1}
+.content::-webkit-scrollbar{width:6px}
+.content::-webkit-scrollbar-track{background:transparent}
+.content::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+.section{margin-bottom:22px}
+.section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-dim);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:"";flex:1;height:1px;background:var(--border)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.card:last-child{margin-bottom:0}
+.card-note{font-size:11px;color:var(--text-dim);line-height:1.6;margin-bottom:10px}
+.card-note a{color:var(--accent);text-decoration:none}
+.card-note code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:11px;color:var(--text)}
+.card-note ol{margin:6px 0 0 16px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;gap:12px}
+.setting-row+.setting-row{border-top:1px solid rgba(255,255,255,.04)}
+.setting-row label{flex:1;font-size:12.5px}
+.setting-row .desc{font-size:10.5px;color:var(--text-dim);margin-top:1px}
+.color-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.color-item{display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--surface2);border-radius:6px}
+.color-item label{font-size:11px;color:var(--text-dim);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.color-item input[type="color"]{width:32px;height:26px;border:1px solid var(--border);border-radius:5px;background:transparent;cursor:pointer;padding:1px;flex-shrink:0}
+.color-item input[type="text"]{width:80px;background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:4px 6px;color:var(--text);font-size:10.5px;font-family:monospace;flex-shrink:0}
+input[type="range"]{width:110px;accent-color:var(--accent);height:5px;-webkit-appearance:none;appearance:none;background:var(--surface2);border-radius:3px;outline:none;cursor:pointer}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid #fff;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid #fff;cursor:pointer}
+input[type="number"]{width:65px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:11.5px}
+select{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 28px 6px 10px;color:var(--text);font-size:11.5px;min-width:140px;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
 select:hover{border-color:var(--accent)}select:focus{border-color:var(--accent);outline:none}
-.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
 .toggle input{opacity:0;position:absolute;width:100%;height:100%;cursor:pointer;z-index:1}
-.toggle .slider{position:absolute;pointer-events:none;inset:0;background:var(--surface2);border-radius:22px;transition:.2s;border:1px solid var(--border)}
-.toggle .slider::before{content:"";position:absolute;width:16px;height:16px;left:2px;bottom:2px;background:var(--text-dim);border-radius:50%;transition:.2s}
-.toggle input:checked+.slider{background:var(--accent);border-color:var(--accent)}
-.toggle input:checked+.slider::before{transform:translateX(18px);background:#fff}
-.btn{padding:8px 20px;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:.15s}
+.toggle .slider{position:absolute;pointer-events:none;inset:0;background:var(--surface3);border-radius:20px;transition:.2s}
+.toggle .slider::before{content:"";position:absolute;width:14px;height:14px;left:2px;bottom:2px;background:#888;border-radius:50%;transition:.2s}
+.toggle input:checked+.slider{background:var(--accent)}
+.toggle input:checked+.slider::before{transform:translateX(16px);background:#fff}
+.btn{padding:7px 18px;border:none;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;transition:.15s}
 .btn-primary{background:var(--accent);color:#000}.btn-primary:hover{opacity:.9}
-.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--border)}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--surface3)}
 .btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{opacity:.9}
-.btn-row{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);align-items:center}
-.btn-row .dirty-hint{font-size:11px;color:var(--accent);opacity:0;transition:opacity .2s;margin-left:auto}
+.btn-sm{padding:5px 12px;font-size:11px}
+.btn-row{display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);align-items:center}
+.btn-row .dirty-hint{font-size:10.5px;color:var(--accent);opacity:0;transition:opacity .2s;margin-left:auto}
 .btn-row .dirty-hint.show{opacity:1}
-.val-label{font-size:12px;color:var(--text-dim);min-width:30px;text-align:right;font-family:monospace}
-.voicemeeter-status{display:flex;align-items:center;gap:6px;font-size:12px;padding:8px 0}
-.vm-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.vm-dot.on{background:var(--accent)}.vm-dot.off{background:var(--danger)}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none}
+.val-label{font-size:10.5px;color:var(--text-dim);min-width:28px;text-align:right;font-family:monospace}
+.vm-status{display:flex;align-items:center;gap:6px;font-size:11px;padding:6px 0}
+.vm-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.vm-dot.on{background:var(--accent);box-shadow:0 0 4px var(--accent)}.vm-dot.off{background:var(--danger)}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:7px 18px;border-radius:7px;font-size:12px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
 .toast.show{opacity:1}
-.status-indicator{display:flex;align-items:center;gap:6px;padding:10px 24px;background:var(--surface);border-bottom:1px solid var(--border);font-size:12px;color:var(--text-dim);flex-shrink:0}
-.status-indicator .indicator-dot{width:8px;height:8px;border-radius:50%;background:#555;transition:background .3s,box-shadow .3s}
-.status-indicator .indicator-dot.on{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.device-list{max-height:120px;overflow-y:auto;font-size:10.5px;color:var(--text-dim);padding:6px 0;line-height:1.7}
+.device-list::-webkit-scrollbar{width:4px}
+.device-list::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px}
+.device-cat{font-weight:600;margin:4px 0 2px;color:var(--text);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.device-item{padding:1px 0;display:flex;align-items:center;gap:4px}
+.device-item .d{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.device-item .d.vm{background:var(--accent)}.device-item .d.ok{background:#666}.device-item .d.no{background:var(--danger)}
+.obs-url{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface2);border-radius:6px;font-family:monospace;font-size:12px;color:var(--accent);margin:8px 0}
+.obs-url .copy-btn{background:var(--surface3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;color:var(--text-dim);font-size:10px;cursor:pointer;font-family:inherit}
+.obs-url .copy-btn:hover{color:var(--text);border-color:var(--accent)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000;animation:modalFadeIn .2s ease}
+@keyframes modalFadeIn{from{opacity:0}to{opacity:1}}
+.modal-card{background:linear-gradient(135deg,#1e1e1e,#252525);border:1px solid var(--border);border-radius:16px;padding:32px 28px 24px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(29,185,84,.08);animation:modalSlideIn .25s ease}
+@keyframes modalSlideIn{from{transform:translateY(20px) scale(.95);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.modal-icon{font-size:40px;margin-bottom:12px;filter:drop-shadow(0 0 12px rgba(29,185,84,.4))}
+.modal-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px}
+.modal-text{font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:24px}
+.modal-actions{display:flex;flex-direction:column;gap:8px}
+.modal-btn{padding:10px 20px;border:none;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;transition:.15s}
+.modal-btn-save{background:var(--accent);color:#000}.modal-btn-save:hover{opacity:.9;box-shadow:0 0 16px rgba(29,185,84,.3)}
+.modal-btn-discard{background:var(--surface2);color:var(--text);border:1px solid var(--border)}.modal-btn-discard:hover{background:var(--surface3)}
+.modal-btn-cancel{background:transparent;color:var(--text-dim);border:1px solid transparent}.modal-btn-cancel:hover{color:var(--text)}
+.titlebar{height:32px;background:#0a0a0a;display:flex;align-items:center;justify-content:space-between;padding:0 8px;-webkit-app-region:drag;flex-shrink:0;user-select:none}.titlebar-title{font-size:12px;color:#888;font-family:'Segoe UI',sans-serif}.titlebar-buttons{display:flex;gap:0;-webkit-app-region:no-drag}.titlebar-btn{width:46px;height:32px;border:none;background:transparent;color:#888;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}.titlebar-btn:hover{background:#333;color:#fff}.titlebar-btn.close:hover{background:#e81123;color:#fff}.titlebar-btn svg{width:10px;height:10px;stroke:currentColor;stroke-width:1.5;fill:none}
 </style>
 </head>
 <body>
-<div class="header"><h1>VORB</h1><span class="badge" id="versionBadge">v3.0.1</span><span class="badge">Settings</span></div>
-<div class="status-indicator" id="statusIndicator"><span class="indicator-dot" id="statusDot"></span><span id="statusText">Initializing...</span></div>
+<div class="titlebar"><span class="titlebar-title">VORB Settings</span><div class="titlebar-buttons"><button class="titlebar-btn" onclick="window.electronAPI?.winMinimize()" title="Minimize"><svg viewBox="0 0 10 10"><line x1="1" y1="5" x2="9" y2="5"/></svg></button><button class="titlebar-btn" onclick="window.electronAPI?.winMaximize()" title="Maximize"><svg viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7" rx="1"/></svg></button><button class="titlebar-btn close" onclick="window.electronAPI?.winClose()" title="Close"><svg viewBox="0 0 10 10"><line x1="1" y1="1" x2="9" y2="9"/><line x1="9" y1="1" x2="1" y2="9"/></svg></button></div></div>
+<div class="header">
+  <h1>VORB <span class="badge accent" id="versionBadge">v—</span></h1>
+  <span class="badge">Settings</span>
+</div>
+<div class="status-bar"><span class="dot" id="statusDot"></span><span id="statusText">Initializing...</span></div>
 <div class="content">
+
+<!-- SPOTIFY -->
 <div class="section">
-<div class="section-title">Spotify API</div>
-<div style="font-size:11px;color:var(--text-dim);padding:8px 10px;line-height:1.6;margin-bottom:8px;background:var(--surface);border-radius:6px;border:1px solid var(--border)">
-<strong style="color:var(--text)">Setup required:</strong> Credentials stored locally only, never transmitted except to Spotify's API.
-<ol style="margin:6px 0 0 16px"><li>Go to <a href="https://developer.spotify.com/dashboard" style="color:var(--accent)" onclick="event.preventDefault();window.electronAPI?.openUrl?.('https://developer.spotify.com/dashboard')">Spotify Developer Dashboard</a></li><li>Create an app (or use existing)</li><li>Add Redirect URI: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">http://127.0.0.1:8888/callback</code> <span style="color:var(--text-dim)">(127.0.0.1 is the standard loopback address)</span></li><li>Copy Client ID and Client Secret below</li></ol>
+  <div class="section-title">Spotify</div>
+  <div class="card">
+    <div class="card-note">
+      <strong style="color:var(--text)">Setup required:</strong> Credentials stored locally only, never transmitted except to Spotify's API.
+      <ol><li>Go to <a href="https://developer.spotify.com/dashboard" onclick="event.preventDefault();window.electronAPI?.openUrl?.('https://developer.spotify.com/dashboard')">Spotify Developer Dashboard</a></li><li>Create an app (or use existing)</li><li>Add Redirect URI: <code>http://127.0.0.1:8888/callback</code></li><li>Copy Client ID and Client Secret below</li></ol>
+    </div>
+    <div class="setting-row"><label>Client ID</label><input type="text" id="spotifyClientId" placeholder="Enter Client ID" style="width:220px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:11.5px;font-family:monospace" onchange="markDirty()"></div>
+    <div class="setting-row"><label>Client Secret</label><input type="password" id="spotifyClientSecret" placeholder="Enter Client Secret" style="width:220px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:11.5px;font-family:monospace" onchange="markDirty()"><button class="btn btn-secondary btn-sm" onclick="toggleSecretVisibility()" id="toggleSecretBtn" title="Show/hide" style="margin-left:4px">👁</button></div>
+    <div class="setting-row"><div style="flex:1"><label>Connection</label><div id="spotifyStatus" style="font-size:10.5px;color:var(--text-dim);margin-top:1px">Not configured</div></div><div style="display:flex;gap:6px"><button class="btn btn-secondary btn-sm" onclick="connectSpotify()" id="connectBtn">Connect</button><button class="btn btn-secondary btn-sm" onclick="reloadAuth()" id="reloadAuthBtn" style="display:none">Reload Auth</button><button class="btn btn-danger btn-sm" onclick="disconnectSpotify()" id="disconnectBtn" style="display:none">Disconnect</button></div></div>
+  </div>
 </div>
-<div class="setting-row"><div style="flex:1"><label>Client ID</label><div class="desc">From your Spotify Developer Dashboard app</div></div><input type="text" id="spotifyClientId" placeholder="Enter your Client ID" style="width:280px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:12px;font-family:monospace" onchange="markDirty()"></div>
-<div class="setting-row"><div style="flex:1"><label>Client Secret</label><div class="desc">Keep this private — never share it</div></div><input type="password" id="spotifyClientSecret" placeholder="Enter your Client Secret" style="width:280px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:12px;font-family:monospace" onchange="markDirty()"><button class="btn btn-secondary" style="padding:4px 8px;font-size:11px;margin-left:4px" onclick="toggleSecretVisibility()" id="toggleSecretBtn" title="Show/hide">👁</button></div>
-<div class="setting-row"><div><label>Connection</label><div id="spotifyStatus" style="font-size:11px;color:var(--text-dim);margin-top:2px">Not configured</div></div><div style="display:flex;gap:6px"><button class="btn btn-secondary" onclick="connectSpotify()" id="connectBtn">Connect</button><button class="btn btn-secondary" onclick="reloadAuth()" id="reloadAuthBtn" style="display:none">Reload Authentication</button><button class="btn btn-danger" onclick="disconnectSpotify()" id="disconnectBtn" style="display:none">Disconnect</button></div></div>
-</div>
+
+<!-- APPEARANCE -->
 <div class="section">
-<div class="section-title">Colors</div>
-<div class="color-row"><label>Title Text</label><input type="color" id="colorTitle" onchange="updateColorPreview('title',this.value)"><input type="text" id="colorTitleText" value="#ffffff" onchange="updateColorFromText('title',this.value)"></div>
-<div class="color-row"><label>Artist / Album Text</label><input type="color" id="colorArtist" onchange="updateColorPreview('artist',this.value)"><input type="text" id="colorArtistText" value="rgba(255,255,255,0.74)" onchange="updateColorFromText('artist',this.value)"></div>
-<div class="color-row"><label>Visualizer</label><input type="color" id="colorViz" onchange="updateColorPreview('viz',this.value)"><input type="text" id="colorVizText" value="#ffffff" onchange="updateColorFromText('viz',this.value)"></div>
-<div class="color-row"><label>Accent / Progress</label><input type="color" id="colorAccent" onchange="updateColorPreview('accent',this.value)"><input type="text" id="colorAccentText" value="#1DB954" onchange="updateColorFromText('accent',this.value)"></div>
-<div class="color-row"><label>Background</label><input type="text" id="colorBgText" value="rgba(255,255,255,0.05)" style="width:200px" onchange="markDirty();previewUI()"></div>
-<div class="color-row"><label>Secondary Text</label><input type="color" id="colorSecondary" onchange="updateColorPreview('secondary',this.value)"><input type="text" id="colorSecondaryText" value="rgba(255,255,255,0.74)" onchange="updateColorFromText('secondary',this.value)"></div>
-<div class="setting-row"><label>Rainbow Mode</label><div class="toggle"><input type="checkbox" id="rainbowEnabled" onchange="toggleRainbow();markDirty();previewUI()"><span class="slider"></span></div></div>
-<div id="rainbowModeRow" class="setting-row" style="display:none"><label>Rainbow Style</label><select id="rainbowMode" onchange="markDirty();previewUI()"><option value="static">Static</option><option value="breathing">Breathing</option><option value="switching">Switching</option><option value="wave">Wave</option></select></div>
+  <div class="section-title">Appearance</div>
+  <div class="card">
+    <div class="setting-row" style="padding-bottom:8px"><label style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px">Text Colors</label></div>
+    <div class="color-grid">
+      <div id="colorTitleRow" class="color-item"><label>Title</label><input type="color" id="colorTitle" onchange="syncColor('title',this.value)"><input type="text" id="colorTitleText" onchange="syncColorText('title',this.value)"></div>
+      <div id="colorArtistRow" class="color-item"><label>Artist / Album</label><input type="color" id="colorArtist" onchange="syncColor('artist',this.value)"><input type="text" id="colorArtistText" onchange="syncColorText('artist',this.value)"></div>
+      <div id="colorSecondaryRow" class="color-item"><label>Secondary Text</label><input type="color" id="colorSecondary" onchange="syncColor('secondary',this.value)"><input type="text" id="colorSecondaryText" onchange="syncColorText('secondary',this.value)"></div>
+    </div>
+    <div class="setting-row" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)"><label style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px">Visualizer</label></div>
+    <div class="color-grid">
+      <div id="colorVizRow" class="color-item"><label>Visualizer Color</label><input type="color" id="colorViz" onchange="syncColor('viz',this.value)"><input type="text" id="colorVizText" onchange="syncColorText('viz',this.value)"></div>
+    </div>
+    <div class="setting-row" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)"><label style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px">Progress & Status</label></div>
+    <div class="color-grid">
+      <div id="colorAccentRow" class="color-item"><label>Progress</label><input type="color" id="colorAccent" onchange="syncColor('accent',this.value)"><input type="text" id="colorAccentText" onchange="syncColorText('accent',this.value)"></div>
+      <div id="colorProgressFadeRow" class="color-item"><label>Progress Fade</label><input type="color" id="colorProgressFade" onchange="syncColor('progressFade',this.value)"><input type="text" id="colorProgressFadeText" onchange="syncColorText('progressFade',this.value)"></div>
+      <div id="colorStatusRow" class="color-item"><label>Status Text</label><input type="color" id="colorStatus" onchange="syncColor('status',this.value)"><input type="text" id="colorStatusText" onchange="syncColorText('status',this.value)"></div>
+    </div>
+    <div class="setting-row" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)"><label style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px">Background & Overlay</label></div>
+    <div class="color-grid">
+      <div id="colorOverlayRow" class="color-item"><label>Overlay Tint</label><input type="color" id="colorOverlay" onchange="syncColor('overlay',this.value)"><input type="text" id="colorOverlayText" onchange="syncColorText('overlay',this.value)"></div>
+    </div>
+    <div class="setting-row" style="margin-top:10px"><label>Glass Effect</label><div class="toggle"><input type="checkbox" id="glassEffect" checked onchange="toggleGlassEffect();markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div id="tintEnabledRow" class="setting-row" style="display:none"><label>Tint Glass</label><div class="toggle"><input type="checkbox" id="tintEnabled" checked onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div id="bgOpacityRow" class="setting-row" style="display:none"><label>Background Opacity</label><input type="range" id="bgOpacity" min="0" max="100" value="5" oninput="updateRangeLabel('bgOpacityVal',this.value);markDirty();previewUI()"><span class="val-label" id="bgOpacityVal">5</span></div>
+    <div class="setting-row" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)"><label style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px">Rainbow</label></div>
+    <div class="setting-row"><label>Rainbow Mode</label><div class="toggle"><input type="checkbox" id="rainbowEnabled" onchange="toggleRainbow();markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div id="rainbowModeRow" class="setting-row" style="display:none"><label>Rainbow Style</label><select id="rainbowMode" onchange="markDirty();previewUI()"><option value="static">Static</option><option value="breathing">Breathing</option><option value="switching">Switching</option><option value="wave">Wave</option></select></div>
+    <div id="rainbowTintRow" class="setting-row" style="display:none"><label>Rainbow Tint</label><div class="toggle"><input type="checkbox" id="rainbowTint" onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
+  </div>
+  <div class="card">
+    <div class="setting-row" style="padding:0 0 8px"><label style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px">Elements</label></div>
+    <div id="showCoverRow" class="setting-row"><label>Show Cover Art</label><div class="toggle"><input type="checkbox" id="showCover" onchange="toggleElementSettings();markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div id="showTitleRow" class="setting-row"><label>Show Title</label><div class="toggle"><input type="checkbox" id="showTitle" onchange="toggleElementSettings();markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div id="showArtistRow" class="setting-row"><label>Show Artist</label><div class="toggle"><input type="checkbox" id="showArtist" onchange="toggleElementSettings();markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div id="showAlbumRow" class="setting-row"><label>Show Album</label><div class="toggle"><input type="checkbox" id="showAlbum" onchange="toggleElementSettings();markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div id="showProgressRow" class="setting-row"><label>Show Progress Bar</label><div class="toggle"><input type="checkbox" id="showProgress" onchange="toggleElementSettings();markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div class="setting-row"><label>Show Visualizer</label><div class="toggle"><input type="checkbox" id="showVisualizer" onchange="toggleVizSettings();markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div id="showStatusBarRow" class="setting-row"><label>Show Status Bar</label><div class="toggle"><input type="checkbox" id="showStatusBar" onchange="toggleElementSettings();markDirty();previewUI()"><span class="slider"></span></div></div>
+  </div>
 </div>
+
+<!-- VISUALIZER -->
 <div class="section">
-<div class="section-title">Display</div>
-<div class="setting-row"><label>Show Cover Art</label><div class="toggle"><input type="checkbox" id="showCover" onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
-<div class="setting-row"><label>Show Title</label><div class="toggle"><input type="checkbox" id="showTitle" onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
-<div class="setting-row"><label>Show Artist</label><div class="toggle"><input type="checkbox" id="showArtist" onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
-<div class="setting-row"><label>Show Album</label><div class="toggle"><input type="checkbox" id="showAlbum" onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
-<div class="setting-row"><label>Show Progress Bar</label><div class="toggle"><input type="checkbox" id="showProgress" onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
-<div class="setting-row"><label>Show Audio Visualizer</label><div class="toggle"><input type="checkbox" id="showVisualizer" onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
+  <div id="visualizerSection" class="section-title">Visualizer</div>
+  <div class="card">
+    <div id="vizStyleRow" class="setting-row" style="display:none"><label>Style</label><select id="vizStyle" onchange="onVizStyleChange()"><option value="spiky">Spiky</option><option value="wavy">Wavy</option><option value="rounded">Rounded</option><option value="bars">Bars</option><option value="dots">Dots</option><option value="lines">Lines</option></select></div>
+    <div id="vizSensitivityRow" class="setting-row" style="display:none"><label>Sensitivity</label><input type="range" id="vizSensitivity" min="0.2" max="3.0" step="0.1" value="1.0" oninput="updateRangeLabel('vizSensitivityVal',this.value);stageVizProfile($('vizStyle').value);markDirty();previewUI()"><span class="val-label" id="vizSensitivityVal">1.0</span></div>
+    <div id="vizBarsRow" class="setting-row" style="display:none"><label>Bar Count</label><input type="range" id="vizBars" min="60" max="360" step="20" value="180" oninput="updateRangeLabel('vizBarsVal',this.value);stageVizProfile($('vizStyle').value);markDirty();previewUI()"><span class="val-label" id="vizBarsVal">180</span></div>
+  </div>
 </div>
+
+<!-- AUDIO -->
 <div class="section">
-<div class="section-title">Audio</div>
-<div class="setting-row"><label>Source Mode</label><select id="audioSource" onchange="markDirty();previewUI()"><option value="voicemeeter">VoiceMeeter (auto)</option><option value="default">Default Input</option><option value="custom">Custom Device</option><option value="desktop">Desktop Audio (loopback)</option></select></div>
-<div id="customDeviceRow" class="setting-row" style="display:none"><label>Select Device</label><select id="audioCustomDevice" onchange="markDirty();previewUI()" style="min-width:200px"></select></div>
-<div id="desktopSourceRow" class="setting-row" style="display:none"><label>Desktop Source</label><select id="audioDesktopSource" onchange="markDirty();previewUI()" style="min-width:200px"><option value="">Loading sources...</option></select></div>
-<div id="deviceList" style="margin-top:8px;font-size:11px;color:var(--text-dim);padding:8px"><div style="margin-bottom:4px;font-weight:600">Available Audio Devices:</div><div id="deviceItems"></div><button class="btn btn-secondary" style="margin-top:6px;font-size:11px;padding:4px 12px" onclick="enumerateAudioDevices();enumerateDesktopSources()">Refresh Devices</button></div>
-<div class="voicemeeter-status" id="voicemeeterStatus"><span class="vm-dot off" id="vmDot"></span><span id="vmLabel">Checking VoiceMeeter...</span></div>
+  <div class="section-title">Audio</div>
+  <div class="card">
+    <div class="setting-row"><label>Source Mode</label><select id="audioSource" onchange="onAudioSourceChange();markDirty();previewUI()"><option value="voicemeeter">VoiceMeeter (auto)</option><option value="default">Default Input</option><option value="custom">Custom Device</option><option value="desktop">Desktop Audio (loopback)</option></select></div>
+    <div id="customDeviceRow" class="setting-row" style="display:none"><label>Select Device</label><select id="audioCustomDevice" onchange="markDirty();previewUI()" style="min-width:180px"></select></div>
+    <div id="desktopSourceRow" class="setting-row" style="display:none"><label>Desktop Source</label><select id="audioDesktopSource" onchange="markDirty();previewUI()" style="min-width:180px"><option value="">Loading...</option></select></div>
+    <div class="vm-status"><span class="vm-dot off" id="vmDot"></span><span id="vmLabel">Checking VoiceMeeter...</span></div>
+    <div class="device-list" id="deviceItems"></div>
+    <button class="btn btn-secondary btn-sm" onclick="enumerateAudioDevices();enumerateDesktopSources()" style="margin-top:6px">Refresh Devices</button>
+  </div>
 </div>
+
+<!-- BEHAVIOR -->
 <div class="section">
-<div class="section-title">Visualizer</div>
-<div class="setting-row"><label>Style</label><select id="vizStyle" onchange="markDirty();previewUI()"><option value="spiky">Spiky</option><option value="wavy">Wavy</option><option value="rounded">Rounded</option><option value="bars">Bars</option><option value="dots">Dots</option><option value="lines">Lines</option></select></div>
-<div class="setting-row"><label>Sensitivity</label><input type="range" id="vizSensitivity" min="0.2" max="3.0" step="0.1" value="1.0" oninput="updateRangeLabel('vizSensitivityVal',this.value);markDirty();previewUI()"><span class="val-label" id="vizSensitivityVal">1.0</span></div>
-<div class="setting-row"><label>Bar Count</label><input type="range" id="vizBars" min="60" max="360" step="20" value="180" oninput="updateRangeLabel('vizBarsVal',this.value);markDirty();previewUI()"><span class="val-label" id="vizBarsVal">180</span></div>
+  <div class="section-title">Behavior</div>
+  <div class="card">
+    <div class="setting-row"><label>Volume-Based Opacity</label><div class="toggle"><input type="checkbox" id="volumeOpacity" onchange="toggleVolOpacity();markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div id="volOpacityMinRow" class="setting-row" style="display:none"><label>Min Opacity (%)</label><input type="range" id="volOpacityMin" min="5" max="50" value="22" oninput="updateRangeLabel('volOpacityMinVal',this.value);markDirty();previewUI()"><span class="val-label" id="volOpacityMinVal">22</span></div>
+    <div id="volOpacityMaxRow" class="setting-row" style="display:none"><label>Max Opacity (%)</label><input type="range" id="volOpacityMax" min="50" max="100" value="88" oninput="updateRangeLabel('volOpacityMaxVal',this.value);markDirty();previewUI()"><span class="val-label" id="volOpacityMaxVal">88</span></div>
+    <div id="fadeDelayRow" class="setting-row" style="display:none"><label>Fade Delay (ms)</label><input type="number" id="fadeDelay" value="3000" min="500" max="10000" step="100" onchange="markDirty();previewUI()"></div>
+    <div id="fadeOnPauseRow" class="setting-row" style="display:none"><label>Fade on Pause</label><div class="toggle"><input type="checkbox" id="fadeOnPause" checked onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div class="setting-row"><label>Hidden Until Playing</label><div class="toggle"><input type="checkbox" id="hiddenUntilPlaying" checked onchange="toggleFadeSettings();markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div class="setting-row"><label>Always On Top</label><div class="toggle"><input type="checkbox" id="alwaysOnTop" onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
+    <div class="setting-row"><label>Developer Mode</label><div class="toggle"><input type="checkbox" id="developerMode" onchange="markDirty()"><span class="slider"></span></div></div>
+    <div id="devModeHint" style="font-size:10px;color:var(--text-dim);padding:4px 0 0;display:none">Enables the Spotify Debug window in the tray menu</div>
+  </div>
 </div>
+
+<!-- OBS -->
 <div class="section">
-<div class="section-title">Behavior</div>
-<div class="setting-row"><label>Volume-Based Opacity</label><div class="toggle"><input type="checkbox" id="volumeOpacity" onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
-<div class="setting-row"><label>Min Opacity (%)</label><input type="range" id="volOpacityMin" min="5" max="50" value="22" oninput="updateRangeLabel('volOpacityMinVal',this.value);markDirty();previewUI()"><span class="val-label" id="volOpacityMinVal">22</span></div>
-<div class="setting-row"><label>Max Opacity (%)</label><input type="range" id="volOpacityMax" min="50" max="100" value="88" oninput="updateRangeLabel('volOpacityMaxVal',this.value);markDirty();previewUI()"><span class="val-label" id="volOpacityMaxVal">88</span></div>
-<div class="setting-row"><label>Fade Delay (ms)</label><input type="number" id="fadeDelay" value="3000" min="500" max="10000" step="100" onchange="markDirty();previewUI()"></div>
-<div class="setting-row"><label>Always On Top</label><div class="toggle"><input type="checkbox" id="alwaysOnTop" onchange="markDirty();previewUI()"><span class="slider"></span></div></div>
-<div class="setting-row"><label>Developer Mode</label><div class="toggle"><input type="checkbox" id="developerMode" onchange="markDirty()"><span class="slider"></span></div></div>
-<div id="devModeHint" style="font-size:10px;color:var(--text-dim);padding:2px 10px 0;display:none">Enables the Spotify Debug window in the tray menu for connection troubleshooting</div>
+  <div class="section-title">OBS Browser Source</div>
+  <div class="card">
+    <div class="obs-url"><span id="obsUrlText">http://127.0.0.1:3001</span><button class="copy-btn" onclick="copyObsUrl()">Copy</button></div>
+    <div class="card-note" style="margin:0">
+      <strong style="color:var(--text)">How to add in OBS:</strong>
+      <ol><li>Add a new <strong>Browser</strong> source</li><li>Paste the URL above</li><li>Set Width: <code>460</code>, Height: <code>460</code></li><li>Check "Refresh browser when scene becomes active"</li></ol>
+    </div>
+  </div>
 </div>
+
+<!-- UPDATES -->
 <div class="section">
-<div class="section-title">OBS Browser Source</div>
-<div style="font-size:11px;color:var(--text-dim);padding:10px;line-height:1.6;background:var(--surface);border-radius:6px;border:1px solid var(--border)"><strong style="color:var(--text)">URL:</strong> <code style="background:var(--surface2);padding:2px 6px;border-radius:3px;color:var(--accent)">http://127.0.0.1:3001</code><br><strong style="color:var(--text)">Size:</strong> 460 × 460<br><br><strong>How to add in OBS:</strong><ol style="margin:4px 0 0 16px"><li>Add a new <strong>Browser</strong> source</li><li>Paste the URL above</li><li>Set Width: <code>460</code>, Height: <code>460</code></li><li>Check "Refresh browser when scene becomes active"</li></ol></div>
+  <div class="section-title">Updates</div>
+  <div class="card">
+    <div class="card-note" style="margin:0 0 8px">Updates are delivered via <a href="https://github.com/TopiACutie/spotify-vorb/releases" onclick="event.preventDefault();window.electronAPI?.openUrl?.('https://github.com/TopiACutie/spotify-vorb/releases')">GitHub Releases</a>. New versions are downloaded silently and installed on next restart.</div>
+    <div class="setting-row" style="padding:0"><label>Auto-check on startup</label><div class="toggle"><input type="checkbox" id="updateAutoCheck" onchange="markDirty()"><span class="slider"></span></div></div>
+    <div class="setting-row" style="padding:8px 0 0"><label>Current version</label><span id="currentVersion" style="color:#888;font-size:12px">v—</span></div>
+    <div class="setting-row" style="padding:8px 0 0"><button class="btn btn-secondary" id="checkUpdatesBtn" onclick="checkForUpdates()" style="width:100%">Check for Updates</button></div>
+  </div>
 </div>
-<div class="section">
-<div class="section-title">Updates</div>
-<div style="font-size:11px;color:var(--text-dim);padding:8px 10px;line-height:1.5;margin-bottom:8px">Updates are delivered via <a href="https://github.com/TopiACutie/spotify-vorb/releases" style="color:var(--accent)" onclick="event.preventDefault();window.electronAPI?.openUrl?.('https://github.com/TopiACutie/spotify-vorb/releases')">GitHub Releases</a>. New versions are downloaded silently and installed on next restart.</div>
-<div class="setting-row"><label>Auto-check on startup</label><div class="toggle"><input type="checkbox" id="updateAutoCheck" onchange="markDirty()"><span class="slider"></span></div></div>
-</div>
+
 <div class="btn-row"><button class="btn btn-primary" id="saveBtn" onclick="saveSettings()">Save Settings</button><button class="btn btn-secondary" onclick="resetDefaults()">Reset Defaults</button><span class="dirty-hint" id="dirtyHint">Unsaved changes</span></div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="modal-overlay" id="closeModal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-icon">⚠</div>
+    <div class="modal-title">Unsaved Changes</div>
+    <div class="modal-text">You have unsaved settings. What would you like to do?</div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-save" onclick="saveAndClose()">Save & Close</button>
+      <button class="modal-btn modal-btn-discard" onclick="discardAndClose()">Don't Save</button>
+      <button class="modal-btn modal-btn-cancel" onclick="cancelClose()">Cancel</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="resetModal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-icon">🔄</div>
+    <div class="modal-title">Reset to Defaults</div>
+    <div class="modal-text">This will clear all settings including Spotify credentials. This cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-save" onclick="confirmReset()">Reset</button>
+      <button class="modal-btn modal-btn-cancel" onclick="cancelReset()">Cancel</button>
+    </div>
+  </div>
+</div>
 <script>
 let currentSettings={},dirty=false;
 function $(id){return document.getElementById(id)}
-async function loadSettings(){try{currentSettings=await window.electronAPI.getSettings()}catch{currentSettings={}}applyToUI();checkVoicemeeter()}
-function applyToUI(){const ui=currentSettings.ui||{},c=ui.colors||{},beh=currentSettings.behavior||{},audio=currentSettings.audio||{},sp=currentSettings.spotify||{};if(c.titleColor){$("colorTitle").value=c.titleColor;$("colorTitleText").value=c.titleColor}else{$("colorTitle").value=c.primary||"#ffffff";$("colorTitleText").value=c.primary||"#ffffff"}if(c.artistColor){$("colorArtist").value=c.artistColor;$("colorArtistText").value=c.artistColor}else{$("colorArtist").value=rgbToHex(c.textSecondary||"rgba(255,255,255,0.74)");$("colorArtistText").value=c.textSecondary||"rgba(255,255,255,0.74)"}if(c.vizColor){$("colorViz").value=c.vizColor;$("colorVizText").value=c.vizColor}else{$("colorViz").value=c.primary||"#ffffff";$("colorVizText").value=c.primary||"#ffffff"}if(c.accent){$("colorAccent").value=c.accent;$("colorAccentText").value=c.accent}if(c.background)$("colorBgText").value=c.background;if(c.textSecondary){$("colorSecondary").value=rgbToHex(c.textSecondary);$("colorSecondaryText").value=c.textSecondary}$("spotifyClientId").value=sp.clientId||"";$("spotifyClientSecret").value=sp.clientSecret||"";const hasCreds=sp.clientId&&sp.clientSecret,hasTokens=sp.accessToken&&sp.refreshToken;if(!hasCreds){$("spotifyStatus").textContent="Not configured — enter your Client ID and Secret above";$("spotifyStatus").style.color="var(--danger)";$("connectBtn").style.display="none";$("reloadAuthBtn").style.display="none";$("disconnectBtn").style.display="none"}else if(hasTokens){$("spotifyStatus").textContent="Connected";$("spotifyStatus").style.color="var(--accent)";$("connectBtn").style.display="none";$("reloadAuthBtn").style.display="inline-block";$("disconnectBtn").style.display="inline-block"}else{$("spotifyStatus").textContent="Credentials set — click Connect to authorize";$("spotifyStatus").style.color="var(--accent)";$("connectBtn").style.display="inline-block";$("connectBtn").textContent="Connect";$("reloadAuthBtn").style.display="none";$("disconnectBtn").style.display="none"}const rainbow=ui.rainbow||{};$("rainbowEnabled").checked=rainbow.enabled===true;$("rainbowMode").value=rainbow.mode||"static";$("rainbowModeRow").style.display=rainbow.enabled?"flex":"none";$("showCover").checked=ui.showCover!==false;$("showTitle").checked=ui.showTitle!==false;$("showArtist").checked=ui.showArtist!==false;$("showAlbum").checked=ui.showAlbum!==false;$("showProgress").checked=ui.showProgress!==false;$("showVisualizer").checked=ui.showVisualizer!==false;$("vizStyle").value=ui.vizStyle||"spiky";$("audioSource").value=audio.source||"voicemeeter";$("customDeviceRow").style.display=$("audioSource").value==="custom"?"flex":"none";$("desktopSourceRow").style.display=$("audioSource").value==="desktop"?"flex":"none";$("vizSensitivity").value=ui.visualizerSensitivity||1.0;$("vizSensitivityVal").textContent=(ui.visualizerSensitivity||1.0);$("vizBars").value=ui.visualizerBars||180;$("vizBarsVal").textContent=(ui.visualizerBars||180);$("volumeOpacity").checked=beh.volumeOpacity!==false;const minOp=beh.volumeOpacityMin!==undefined?Math.round(beh.volumeOpacityMin*100):22,maxOp=beh.volumeOpacityMax!==undefined?Math.round(beh.volumeOpacityMax*100):88;$("volOpacityMin").value=minOp;$("volOpacityMinVal").textContent=minOp;$("volOpacityMax").value=maxOp;$("volOpacityMaxVal").textContent=maxOp;$("fadeDelay").value=beh.fadeDelay||3000;$("alwaysOnTop").checked=beh.alwaysOnTop!==false;$("developerMode").checked=beh.developerMode===true;$("devModeHint").style.display=beh.developerMode?"block":"none";const upd=currentSettings.update||{};$("updateAutoCheck").checked=upd.autoCheck!==false}
-function collectSettings(){const s=JSON.parse(JSON.stringify(currentSettings));s.spotify=s.spotify||{};const cid=$("spotifyClientId").value.trim(),cs=$("spotifyClientSecret").value.trim();if(cid)s.spotify.clientId=cid;if(cs)s.spotify.clientSecret=cs;s.ui=s.ui||{};s.ui.colors={titleColor:$("colorTitleText").value||"#ffffff",artistColor:$("colorArtistText").value||"rgba(255,255,255,0.74)",vizColor:$("colorVizText").value||"#ffffff",accent:$("colorAccentText").value||"#1DB954",background:$("colorBgText").value||"rgba(255,255,255,0.05)",textSecondary:$("colorSecondaryText").value||"rgba(255,255,255,0.70)"};s.ui.rainbow={enabled:$("rainbowEnabled").checked,mode:$("rainbowMode").value};s.ui.showCover=$("showCover").checked;s.ui.showTitle=$("showTitle").checked;s.ui.showArtist=$("showArtist").checked;s.ui.showAlbum=$("showAlbum").checked;s.ui.showProgress=$("showProgress").checked;s.ui.showVisualizer=$("showVisualizer").checked;s.ui.vizStyle=$("vizStyle").value;s.ui.visualizerSensitivity=parseFloat($("vizSensitivity").value);s.ui.visualizerBars=parseInt($("vizBars").value);s.audio=s.audio||{};s.audio.source=$("audioSource").value;if(s.audio.source==="custom"){s.audio.customDeviceId=$("audioCustomDevice").value;s.audio.desktopSourceId=null}else if(s.audio.source==="desktop"){s.audio.desktopSourceId=$("audioDesktopSource").value;s.audio.customDeviceId=null}else{s.audio.customDeviceId=null;s.audio.desktopSourceId=null}s.behavior=s.behavior||{};s.behavior.volumeOpacity=$("volumeOpacity").checked;s.behavior.volumeOpacityMin=parseInt($("volOpacityMin").value)/100;s.behavior.volumeOpacityMax=parseInt($("volOpacityMax").value)/100;s.behavior.fadeDelay=parseInt($("fadeDelay").value);s.behavior.alwaysOnTop=$("alwaysOnTop").checked;s.behavior.developerMode=$("developerMode").checked;$("devModeHint").style.display=s.behavior.developerMode?"block":"none";s.update={url:"",autoCheck:$("updateAutoCheck").checked};return s}
-async function saveSettings(){const n=collectSettings();try{await window.electronAPI.saveSettings(n);currentSettings=n;dirty=false;$("dirtyHint").classList.remove("show");showToast("Settings saved!");applyToUI()}catch(e){showToast("Error saving settings: "+e.message)}}
-function connectSpotify(){const cid=$("spotifyClientId").value.trim(),cs=$("spotifyClientSecret").value.trim();if(!cid||!cs){showToast("Enter your Client ID and Client Secret first");return}window.electronAPI.startAuth();showToast("Opening Spotify login...")}
-function reloadAuth(){window.electronAPI.startAuth();showToast("Opening Spotify login for new token...")}
-function disconnectSpotify(){window.electronAPI.disconnectSpotify();$("spotifyStatus").textContent="Disconnected — click Connect to authorize";$("spotifyStatus").style.color="var(--danger)";$("connectBtn").style.display="inline-block";$("connectBtn").textContent="Connect";$("reloadAuthBtn").style.display="none";$("disconnectBtn").style.display="none";showToast("Disconnected from Spotify")}
+async function loadSettings(){try{currentSettings=await window.electronAPI.getSettings();if(!currentSettings.audio)currentSettings.audio={source:"voicemeeter",customDeviceId:null,desktopSourceId:null};migrateVizProfiles()}catch{currentSettings={}}applyToUI();checkVoicemeeter()}
+function migrateVizProfiles(){const ui=currentSettings.ui||{};if(!ui.vizProfiles&&(ui.visualizerSensitivity!=null||ui.visualizerBars!=null)){const sens=ui.visualizerSensitivity??1.0,bars=ui.visualizerBars??180;ui.vizProfiles={spiky:{sensitivity:sens,bars},wavy:{sensitivity:sens,bars},rounded:{sensitivity:sens,bars},bars:{sensitivity:sens,bars},dots:{sensitivity:sens,bars},lines:{sensitivity:sens,bars}};delete ui.visualizerSensitivity;delete ui.visualizerBars}}
+function applyToUI(){const ui=currentSettings.ui||{},c=ui.colors||{},beh=currentSettings.behavior||{},audio=currentSettings.audio||{},sp=currentSettings.spotify||{};
+const tc=c.titleColor||"#ffffff";$("colorTitle").value=rgbToHex(tc);$("colorTitleText").value=tc;
+const ac=c.artistColor||"rgba(255,255,255,0.74)";$("colorArtist").value=rgbToHex(ac);$("colorArtistText").value=ac;
+const vc=c.vizColor||"#ffffff";$("colorViz").value=rgbToHex(vc);$("colorVizText").value=vc;
+const xc=c.accent||"#1DB954";$("colorAccent").value=rgbToHex(xc);$("colorAccentText").value=xc;
+const pc=c.progressFadeColor||"#ffffff";$("colorProgressFade").value=rgbToHex(pc);$("colorProgressFadeText").value=pc;const stc=c.statusColor||"rgba(255,255,255,0.50)";$("colorStatus").value=rgbToHex(stc);$("colorStatusText").value=stc;
+const sc=c.textSecondary||"rgba(255,255,255,0.70)";$("colorSecondary").value=rgbToHex(sc);$("colorSecondaryText").value=sc;
+const oc=c.overlayColor||"rgba(255,255,255,0.05)";$("colorOverlay").value=rgbToHex(oc);$("colorOverlayText").value=oc;
+$("glassEffect").checked=c.glassEffect!==false;$("tintEnabled").checked=c.tintEnabled!==false;$("bgOpacity").value=Math.round(((c.bgOpacity??0.10)-0.10)/0.55*100);updateRangeLabel("bgOpacityVal",$("bgOpacity").value);
+$("spotifyClientId").value=sp.clientId||"";$("spotifyClientSecret").value=sp.clientSecret||"";
+const hasCreds=sp.clientId&&sp.clientSecret,hasTokens=sp.accessToken&&sp.refreshToken;
+if(!hasCreds){$("spotifyStatus").textContent="Not configured — enter your Client ID and Secret";$("spotifyStatus").style.color="var(--danger)";$("connectBtn").style.display="none";$("reloadAuthBtn").style.display="none";$("disconnectBtn").style.display="none"}
+else if(hasTokens){$("spotifyStatus").textContent="Connected";$("spotifyStatus").style.color="var(--accent)";$("connectBtn").style.display="none";$("reloadAuthBtn").style.display="inline-block";$("disconnectBtn").style.display="inline-block"}
+else{$("spotifyStatus").textContent="Credentials set — click Connect to authorize";$("spotifyStatus").style.color="var(--accent)";$("connectBtn").style.display="inline-block";$("connectBtn").textContent="Connect";$("reloadAuthBtn").style.display="none";$("disconnectBtn").style.display="none"}
+$("rainbowEnabled").checked=ui.rainbow?.enabled===true;$("rainbowMode").value=ui.rainbow?.mode||"static";$("rainbowTint").checked=ui.rainbow?.tintEnabled===true;toggleRainbow();toggleGlassEffect();
+$("showCover").checked=ui.showCover!==false;$("showTitle").checked=ui.showTitle!==false;$("showArtist").checked=ui.showArtist!==false;$("showAlbum").checked=ui.showAlbum!==false;$("showProgress").checked=ui.showProgress!==false;$("showVisualizer").checked=ui.showVisualizer!==false;$("showStatusBar").checked=ui.showStatusBar!==false;toggleVizSettings();toggleElementSettings();
+$("vizStyle").value=ui.vizStyle||"spiky";$("vizStyle").dataset.prev=$("vizStyle").value;loadVizProfile();
+$("audioSource").value=audio.source||"voicemeeter";onAudioSourceChange();
+$("volumeOpacity").checked=beh.volumeOpacity!==false;$("volOpacityMin").value=Math.round((beh.volumeOpacityMin??0.22)*100);updateRangeLabel("volOpacityMinVal",$("volOpacityMin").value);toggleVolOpacity();
+$("volOpacityMax").value=Math.round((beh.volumeOpacityMax??0.88)*100);updateRangeLabel("volOpacityMaxVal",$("volOpacityMax").value);
+$("fadeDelay").value=beh.fadeDelay||3000;$("fadeOnPause").checked=beh.fadeOnPause!==false;$("hiddenUntilPlaying").checked=beh.hiddenUntilPlaying!==false;toggleFadeSettings();$("alwaysOnTop").checked=beh.alwaysOnTop!==false;$("developerMode").checked=!!beh.developerMode;$("devModeHint").style.display=beh.developerMode?"block":"none";
+$("updateAutoCheck").checked=currentSettings.update?.autoCheck!==false}
+function loadVizProfile(){const style=$("vizStyle").value,profiles=currentSettings.ui?.vizProfiles||{},p=profiles[style]||{sensitivity:1.0,bars:180};$("vizSensitivity").value=p.sensitivity;updateRangeLabel("vizSensitivityVal",p.sensitivity);$("vizBars").value=p.bars;updateRangeLabel("vizBarsVal",p.bars)}
+function stageVizProfile(style){currentSettings.ui=currentSettings.ui||{};currentSettings.ui.vizProfiles=currentSettings.ui.vizProfiles||{};currentSettings.ui.vizProfiles[style]={sensitivity:parseFloat($("vizSensitivity").value),bars:parseInt($("vizBars").value)}}
+function onVizStyleChange(){const old=$("vizStyle").dataset.prev||"spiky";stageVizProfile(old);$("vizStyle").dataset.prev=$("vizStyle").value;loadVizProfile();markDirty();previewUI()}
+function syncColor(n,v){const t=$(`color${n.charAt(0).toUpperCase()+n.slice(1)}Text`);if(t)t.value=v;markDirty();previewUI()}
+function syncColorText(n,v){const c=$(`color${n.charAt(0).toUpperCase()+n.slice(1)}`);if(c&&/^#[0-9a-f]{6}$/i.test(v))c.value=v;markDirty();previewUI()}
+function collectSettings(){const s=JSON.parse(JSON.stringify(currentSettings));s.spotify=s.spotify||{};const cid=$("spotifyClientId").value.trim(),cs=$("spotifyClientSecret").value.trim();if(cid)s.spotify.clientId=cid;if(cs)s.spotify.clientSecret=cs;s.ui=s.ui||{};s.ui.colors={titleColor:$("colorTitleText").value||"#ffffff",artistColor:$("colorArtistText").value||"rgba(255,255,255,0.74)",vizColor:$("colorVizText").value||"#ffffff",accent:$("colorAccentText").value||"#1DB954",overlayColor:$("colorOverlayText").value||"rgba(255,255,255,0.05)",glassEffect:$("glassEffect").checked,tintEnabled:$("tintEnabled").checked,bgOpacity:0.10+parseInt($("bgOpacity").value)/100*0.55,textSecondary:$("colorSecondaryText").value||"rgba(255,255,255,0.70)",progressFadeColor:$("colorProgressFadeText").value||"#ffffff",statusColor:$("colorStatusText").value||"rgba(255,255,255,0.50)"};s.ui.rainbow={enabled:$("rainbowEnabled").checked,mode:$("rainbowMode").value,tintEnabled:$("rainbowTint").checked};s.ui.showCover=$("showCover").checked;s.ui.showTitle=$("showTitle").checked;s.ui.showArtist=$("showArtist").checked;s.ui.showAlbum=$("showAlbum").checked;s.ui.showProgress=$("showProgress").checked;s.ui.showVisualizer=$("showVisualizer").checked;s.ui.showStatusBar=$("showStatusBar").checked;s.ui.vizStyle=$("vizStyle").value;s.ui.vizProfiles=s.ui.vizProfiles||{};const style=$("vizStyle").value;s.ui.vizProfiles[style]={sensitivity:parseFloat($("vizSensitivity").value),bars:parseInt($("vizBars").value)};delete s.ui.visualizerSensitivity;delete s.ui.visualizerBars;s.audio=s.audio||{};s.audio.source=$("audioSource").value;if(s.audio.source==="custom"){s.audio.customDeviceId=$("audioCustomDevice").value;s.audio.desktopSourceId=null}else if(s.audio.source==="desktop"){s.audio.desktopSourceId=$("audioDesktopSource").value;s.audio.customDeviceId=null}else{s.audio.customDeviceId=null;s.audio.desktopSourceId=null}s.behavior=s.behavior||{};s.behavior.volumeOpacity=$("volumeOpacity").checked;s.behavior.volumeOpacityMin=parseInt($("volOpacityMin").value)/100;s.behavior.volumeOpacityMax=parseInt($("volOpacityMax").value)/100;s.behavior.fadeDelay=parseInt($("fadeDelay").value);s.behavior.fadeOnPause=$("fadeOnPause").checked;s.behavior.hiddenUntilPlaying=$("hiddenUntilPlaying").checked;s.behavior.alwaysOnTop=$("alwaysOnTop").checked;s.behavior.developerMode=$("developerMode").checked;$("devModeHint").style.display=s.behavior.developerMode?"block":"none";s.update={url:"",autoCheck:$("updateAutoCheck").checked};return s}
+async function saveSettings(){const n=collectSettings();try{await window.electronAPI.saveSettings(n);currentSettings=n;dirty=false;$("dirtyHint").classList.remove("show");showToast("Settings saved!");applyToUI()}catch(e){showToast("Error: "+e.message)}}
+function connectSpotify(){const cid=$("spotifyClientId").value.trim(),cs=$("spotifyClientSecret").value.trim();if(!cid||!cs){showToast("Enter Client ID and Secret first");return}window.electronAPI.startAuth();$("spotifyStatus").textContent="Connecting...";$("spotifyStatus").style.color="var(--accent)";showToast("Opening Spotify login...")}
+function reloadAuth(){window.electronAPI.startAuth();showToast("Opening Spotify login...")}
+function disconnectSpotify(){window.electronAPI.disconnectSpotify();$("spotifyStatus").textContent="Disconnected";$("spotifyStatus").style.color="var(--danger)";$("connectBtn").style.display="inline-block";$("connectBtn").textContent="Connect";$("reloadAuthBtn").style.display="none";$("disconnectBtn").style.display="none";showToast("Disconnected")}
 function toggleSecretVisibility(){const inp=$("spotifyClientSecret");inp.type=inp.type==="password"?"text":"password"}
-async function checkVoicemeeter(){try{const installed=await window.electronAPI.getVoicemeeterDevices();const dot=$("vmDot"),label=$("vmLabel");if(installed){dot.className="vm-dot on";label.textContent="VoiceMeeter detected"}else{dot.className="vm-dot off";label.textContent="VoiceMeeter not detected - install from vb-audio.com"}}catch{$("vmDot").className="vm-dot off";$("vmLabel").textContent="Could not check VoiceMeeter status"}}
+function onAudioSourceChange(){$("customDeviceRow").style.display=$("audioSource").value==="custom"?"flex":"none";$("desktopSourceRow").style.display=$("audioSource").value==="desktop"?"flex":"none"}
+async function checkVoicemeeter(){try{const installed=await window.electronAPI.getVoicemeeterDevices();$("vmDot").className=installed?"vm-dot on":"vm-dot off";$("vmLabel").textContent=installed?"VoiceMeeter detected":"VoiceMeeter not detected"}catch{$("vmDot").className="vm-dot off";$("vmLabel").textContent="Could not check VoiceMeeter"}}
 function previewUI(){const p=collectSettings();window.electronAPI.previewSettings(p).catch(()=>{})}
-function updateColorPreview(name,value){const t=$(`color${name.charAt(0).toUpperCase()+name.slice(1)}Text`);if(t)t.value=value;markDirty();previewUI()}
-function updateColorFromText(name,value){const c=$(`color${name.charAt(0).toUpperCase()+name.slice(1)}`);if(c&&/^#[0-9a-f]{6}$/i.test(value))c.value=value;markDirty();previewUI()}
-function rgbToHex(rgb){const m=rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);if(!m)return rgb;const r=parseInt(m[1]).toString(16).padStart(2,"0"),g=parseInt(m[2]).toString(16).padStart(2,"0"),b=parseInt(m[3]).toString(16).padStart(2,"0");return`#${r}${g}${b}`}
+function rgbToHex(rgb){if(!rgb||typeof rgb!=="string")return"#ffffff";if(rgb.startsWith("#"))return rgb.length===4?`#${rgb[1]+rgb[1]+rgb[2]+rgb[2]+rgb[3]+rgb[3]}`:rgb;const m=rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);if(!m)return"#ffffff";const r=parseInt(m[1]).toString(16).padStart(2,"0"),g=parseInt(m[2]).toString(16).padStart(2,"0"),b=parseInt(m[3]).toString(16).padStart(2,"0");return`#${r}${g}${b}`}
 function updateRangeLabel(id,val){$(id).textContent=val}
-function toggleRainbow(){$("rainbowModeRow").style.display=$("rainbowEnabled").checked?"flex":"none"}
+function toggleRainbow(){$("rainbowModeRow").style.display=$("rainbowEnabled").checked?"flex":"none";$("rainbowTintRow").style.display=$("rainbowEnabled").checked?"flex":"none"}function toggleFadeSettings(){$("fadeDelayRow").style.display=$("hiddenUntilPlaying").checked?"flex":"none";$("fadeOnPauseRow").style.display=$("hiddenUntilPlaying").checked?"flex":"none"}function toggleGlassEffect(){const on=$("glassEffect").checked;$("tintEnabledRow").style.display=on?"flex":"none";$("bgOpacityRow").style.display=on?"flex":"none";if(!on)$("tintEnabled").checked=false}function toggleVolOpacity(){const on=$("volumeOpacity").checked;$("volOpacityMinRow").style.display=on?"flex":"none";$("volOpacityMaxRow").style.display=on?"flex":"none"}function toggleVizSettings(){const on=$("showVisualizer").checked;$("vizStyleRow").style.display=on?"flex":"none";$("vizSensitivityRow").style.display=on?"flex":"none";$("vizBarsRow").style.display=on?"flex":"none";$("colorVizRow").style.display=on?"flex":"none";$("visualizerSection").parentElement.style.display=on?"":"none"}function toggleElementSettings(){const showCover=$("showCover").checked,showTitle=$("showTitle").checked,showArtist=$("showArtist").checked,showAlbum=$("showAlbum").checked,showProgress=$("showProgress").checked,showStatus=$("showStatusBar").checked;$("colorTitleRow").style.display=showTitle?"flex":"none";$("colorArtistRow").style.display=(showArtist||showAlbum)?"flex":"none";$("colorSecondaryRow").style.display=showStatus?"flex":"none";$("colorAccentRow").style.display=showProgress?"flex":"none";$("colorProgressFadeRow").style.display=showProgress?"flex":"none";$("colorStatusRow").style.display=showStatus?"flex":"none"}
 function markDirty(){dirty=true;$("dirtyHint").classList.add("show")}
 function showToast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2000)}
-function resetDefaults(){if(!confirm("Reset all settings to defaults?"))return;currentSettings={spotify:{clientId:"",clientSecret:"",accessToken:null,refreshToken:null},ui:{colors:{titleColor:"#ffffff",artistColor:"rgba(255,255,255,0.74)",vizColor:"#ffffff",accent:"#1DB954",background:"rgba(255,255,255,0.05)",textSecondary:"rgba(255,255,255,0.70)"},rainbow:{enabled:false,mode:"static"},showCover:true,showTitle:true,showArtist:true,showAlbum:true,showProgress:true,showVisualizer:true,vizStyle:"spiky",visualizerSensitivity:1.0,visualizerBars:180},audio:{source:"voicemeeter",customDeviceId:null,desktopSourceId:null},behavior:{volumeOpacity:true,volumeOpacityMin:0.22,volumeOpacityMax:0.88,fadeDelay:3000,alwaysOnTop:true,developerMode:false},update:{url:"",autoCheck:true}};applyToUI();markDirty();showToast("Defaults loaded - click Save to apply")}
+async function copyObsUrl(){const u="http://127.0.0.1:3001";try{if(window.electronAPI)await window.electronAPI.copyText(u);else await navigator.clipboard.writeText(u);showToast("URL copied!")}catch{showToast("Copy failed")}}
+function resetDefaults(){$("resetModal").style.display="flex"}
+function confirmReset(){$("resetModal").style.display="none";const VP={spiky:{sensitivity:1.0,bars:180},wavy:{sensitivity:1.0,bars:180},rounded:{sensitivity:1.0,bars:180},bars:{sensitivity:1.0,bars:180},dots:{sensitivity:1.0,bars:180},lines:{sensitivity:1.0,bars:180}};currentSettings={spotify:{clientId:"",clientSecret:"",accessToken:null,refreshToken:null},ui:{colors:{titleColor:"#ffffff",artistColor:"rgba(255,255,255,0.74)",vizColor:"#ffffff",accent:"#1DB954",overlayColor:"rgba(255,255,255,0.10)",glassEffect:true,tintEnabled:true,bgOpacity:0.10,textSecondary:"rgba(255,255,255,0.70)",progressFadeColor:"#ffffff",statusColor:"rgba(255,255,255,0.50)"},rainbow:{enabled:false,mode:"static"},showCover:true,showTitle:true,showArtist:true,showAlbum:true,showProgress:true,showVisualizer:true,showStatusBar:true,vizStyle:"spiky",vizProfiles:VP},audio:{source:"voicemeeter",customDeviceId:null,desktopSourceId:null},behavior:{volumeOpacity:true,volumeOpacityMin:0.22,volumeOpacityMax:0.88,fadeDelay:3000,fadeOnPause:true,hiddenUntilPlaying:true,alwaysOnTop:true,developerMode:false},update:{url:"",autoCheck:true}};applyToUI();markDirty();showToast("Defaults loaded — click Save to apply")}
+function cancelReset(){$("resetModal").style.display="none"}
 document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="s"){e.preventDefault();saveSettings()}});
+let closePending=false;
+function promptClose(){if(!dirty){window.electronAPI.winClose();return}closePending=true;$("closeModal").style.display="flex"}
+function saveAndClose(){closePending=true;saveSettings().then(()=>{window.electronAPI.winClose()}).catch(()=>{window.electronAPI.winClose()})}
+function discardAndClose(){closePending=true;dirty=false;window.electronAPI.winClose()}
+function cancelClose(){closePending=false;$("closeModal").style.display="none"}
+window.addEventListener("beforeunload",e=>{if(dirty&&!closePending){e.preventDefault();e.returnValue="";promptClose()}});
 loadSettings().then(()=>{setTimeout(()=>updateStatusIndicator(currentSettings),100)});
-async function enumerateAudioDevices(){try{let temp=null;try{temp=await navigator.mediaDevices.getUserMedia({audio:true});temp.getTracks().forEach(t=>t.stop())}catch{}const all=await navigator.mediaDevices.enumerateDevices(),inputs=all.filter(d=>d.kind==="audioinput"),outputs=all.filter(d=>d.kind==="audiooutput"),container=$("deviceItems"),customSelect=$("audioCustomDevice");container.innerHTML="";customSelect.innerHTML="";const vmP=/voicemeeter|voice.?meeter|vb-audio|vbaudio/i;let hasVm=false;function addDevice(dev,kind,prefix){const isVm=vmP.test(dev.label);if(isVm)hasVm=true;const dot=isVm?'<span style="color:var(--accent)">&#9679;</span>':dev.label?'<span style="color:var(--text-dim)">&#9671;</span>':'<span style="color:var(--danger)">&#9671;</span>',label=dev.label||`Unknown ${kind} (${dev.deviceId.slice(0,8)}...)`;container.innerHTML+=`<div style="padding:2px 0">${dot} ${label}</div>`;{const opt=document.createElement("option");opt.value=dev.deviceId;opt.textContent=prefix+" "+label;customSelect.appendChild(opt)}}if(inputs.length>0){container.innerHTML+='<div style="font-weight:600;margin:4px 0 2px;color:var(--accent)">INPUTS:</div>';for(const dev of inputs)addDevice(dev,"input","[IN]")}if(outputs.length>0){container.innerHTML+='<div style="font-weight:600;margin:4px 0 2px;color:var(--text-dim)">OUTPUTS:</div>';for(const dev of outputs)addDevice(dev,"output","[OUT]")}if(hasVm){$("vmDot").className="vm-dot on";$("vmLabel").textContent="VoiceMeeter detected"}else{$("vmDot").className="vm-dot off";$("vmLabel").textContent="VoiceMeeter not detected"}if(currentSettings.audio?.customDeviceId)customSelect.value=currentSettings.audio.customDeviceId}catch(e){$("deviceItems").innerHTML='<div style="color:var(--danger)">Could not enumerate devices</div>'}}
-async function enumerateDesktopSources(){try{const sources=await window.electronAPI.getDesktopSources(),select=$("audioDesktopSource");select.innerHTML='<option value="">-- Select desktop source --</option>';for(const s of sources){const opt=document.createElement("option");opt.value=s.id;opt.textContent=s.name;select.appendChild(opt)}if(currentSettings.audio?.desktopSourceId)select.value=currentSettings.audio.desktopSourceId;if(sources.length>0){const container=$("deviceItems");container.innerHTML+='<div style="font-weight:600;margin:4px 0 2px;color:var(--accent)">DESKTOP CAPTURE:</div>';for(const s of sources)container.innerHTML+=`<div style="padding:2px 0"><span style="color:var(--accent)">&#9679;</span> ${s.name}</div>`}}catch{}}
-$("audioSource").addEventListener("change",function(){$("customDeviceRow").style.display=this.value==="custom"?"flex":"none";$("desktopSourceRow").style.display=this.value==="desktop"?"flex":"none"});if($("audioSource").value==="custom")$("customDeviceRow").style.display="flex";if($("audioSource").value==="desktop")$("desktopSourceRow").style.display="flex";
-setTimeout(async()=>{await enumerateAudioDevices();await enumerateDesktopSources();const src=$("audioSource").value;if(src==="custom"||src==="desktop")previewUI()},500);
-function updateStatusIndicator(s){const hasCreds=s.spotify?.clientId&&s.spotify?.clientSecret,hasTokens=s.spotify?.accessToken&&s.spotify?.refreshToken,connected=hasCreds&&hasTokens,audio=s.audio?.source||"none",hasDevice=audio==="custom"?!!s.audio?.customDeviceId:audio==="desktop"?!!s.audio?.desktopSourceId:true;if(connected&&hasDevice){$("statusDot").className="indicator-dot on";$("statusText").textContent="All systems ready"}else if(!hasCreds){$("statusDot").className="indicator-dot";$("statusText").textContent="Spotify not configured"}else if(!hasTokens){$("statusDot").className="indicator-dot";$("statusText").textContent="Spotify not connected"}else if(!hasDevice){$("statusDot").className="indicator-dot";$("statusText").textContent="No audio device configured"}}
-setInterval(async()=>{try{const s=await window.electronAPI.getSettings();if(s.spotify){currentSettings.spotify=currentSettings.spotify||{};currentSettings.spotify.accessToken=s.spotify.accessToken;currentSettings.spotify.refreshToken=s.spotify.refreshToken;currentSettings.spotify.clientId=s.spotify.clientId;currentSettings.spotify.clientSecret=s.spotify.clientSecret}const hasTokens=s.spotify?.accessToken&&s.spotify?.refreshToken,hasCreds=s.spotify?.clientId&&s.spotify?.clientSecret;if(!hasCreds){$("spotifyStatus").textContent="Not configured — enter your Client ID and Secret above";$("spotifyStatus").style.color="var(--danger)";$("connectBtn").style.display="none";$("reloadAuthBtn").style.display="none";$("disconnectBtn").style.display="none"}else if(hasTokens){$("spotifyStatus").textContent="Connected";$("spotifyStatus").style.color="var(--accent)";$("connectBtn").style.display="none";$("reloadAuthBtn").style.display="inline-block";$("disconnectBtn").style.display="inline-block"}else{$("spotifyStatus").textContent="Credentials set — click Connect to authorize";$("spotifyStatus").style.color="var(--accent)";$("connectBtn").style.display="inline-block";$("connectBtn").textContent="Connect";$("reloadAuthBtn").style.display="none";$("disconnectBtn").style.display="none"}updateStatusIndicator(s)}catch{}},5000);
+async function enumerateAudioDevices(){try{let temp=null;try{temp=await navigator.mediaDevices.getUserMedia({audio:true});temp.getTracks().forEach(t=>t.stop())}catch{}const all=await navigator.mediaDevices.enumerateDevices(),inputs=all.filter(d=>d.kind==="audioinput"),outputs=all.filter(d=>d.kind==="audiooutput"),container=$("deviceItems"),customSelect=$("audioCustomDevice");container.innerHTML="";customSelect.innerHTML="";const vmP=/voicemeeter|voice.?meeter|vb-audio|vbaudio/i;let hasVm=false;function addDevice(dev,kind,prefix){const isVm=vmP.test(dev.label);if(isVm)hasVm=true;const dot=isVm?'vm':dev.label?'ok':'no',label=dev.label||`Unknown ${kind} (${dev.deviceId.slice(0,8)}...)`;container.innerHTML+=`<div class="device-item"><span class="d ${dot}"></span>${label}</div>`;{const opt=document.createElement("option");opt.value=dev.deviceId;opt.textContent=prefix+" "+label;customSelect.appendChild(opt)}}if(inputs.length>0){container.innerHTML+='<div class="device-cat">Inputs</div>';for(const dev of inputs)addDevice(dev,"input","[IN]")}if(outputs.length>0){container.innerHTML+='<div class="device-cat">Outputs</div>';for(const dev of outputs)addDevice(dev,"output","[OUT]")}$("vmDot").className=hasVm?"vm-dot on":"vm-dot off";$("vmLabel").textContent=hasVm?"VoiceMeeter detected":"VoiceMeeter not detected";if(currentSettings.audio?.customDeviceId)customSelect.value=currentSettings.audio.customDeviceId}catch(e){$("deviceItems").innerHTML='<div style="color:var(--danger)">Could not enumerate devices</div>'}}
+async function enumerateDesktopSources(){try{const sources=await window.electronAPI.getDesktopSources(),select=$("audioDesktopSource");select.innerHTML='<option value="">-- Select source --</option>';for(const s of sources){const opt=document.createElement("option");opt.value=s.id;opt.textContent=s.name;select.appendChild(opt)}if(currentSettings.audio?.desktopSourceId)select.value=currentSettings.audio.desktopSourceId;if(sources.length>0){const container=$("deviceItems");container.innerHTML+='<div class="device-cat">Desktop Capture</div>';for(const s of sources)container.innerHTML+=`<div class="device-item"><span class="d vm"></span>${s.name}</div>`}}catch{}}
+setTimeout(async()=>{await enumerateAudioDevices();await enumerateDesktopSources();if($("audioSource").value==="custom"||$("audioSource").value==="desktop")previewUI()},500);
+function updateStatusIndicator(s){const hasCreds=s.spotify?.clientId&&s.spotify?.clientSecret,hasTokens=s.spotify?.accessToken&&s.spotify?.refreshToken,connected=hasCreds&&hasTokens,audio=s.audio?.source||"none",hasDevice=audio==="custom"?!!s.audio?.customDeviceId:audio==="desktop"?!!s.audio?.desktopSourceId:true;if(connected&&hasDevice){$("statusDot").className="dot on";$("statusText").textContent="All systems ready"}else if(!hasCreds){$("statusDot").className="dot";$("statusText").textContent="Spotify not configured"}else if(!hasTokens){$("statusDot").className="dot";$("statusText").textContent="Spotify not connected"}else if(!hasDevice){$("statusDot").className="dot";$("statusText").textContent="No audio device configured"}}
+setInterval(async()=>{try{const s=await window.electronAPI.getSettings();if(s.spotify){currentSettings.spotify=currentSettings.spotify||{};currentSettings.spotify.accessToken=s.spotify.accessToken;currentSettings.spotify.refreshToken=s.spotify.refreshToken;currentSettings.spotify.clientId=s.spotify.clientId;currentSettings.spotify.clientSecret=s.spotify.clientSecret}const hasTokens=s.spotify?.accessToken&&s.spotify?.refreshToken,hasCreds=s.spotify?.clientId&&s.spotify?.clientSecret;if(!hasCreds){$("spotifyStatus").textContent="Not configured";$("spotifyStatus").style.color="var(--danger)";$("connectBtn").style.display="none";$("reloadAuthBtn").style.display="none";$("disconnectBtn").style.display="none"}else if(hasTokens){$("spotifyStatus").textContent="Connected";$("spotifyStatus").style.color="var(--accent)";$("connectBtn").style.display="none";$("reloadAuthBtn").style.display="inline-block";$("disconnectBtn").style.display="inline-block"}else{$("spotifyStatus").textContent="Credentials set — click Connect";$("spotifyStatus").style.color="var(--accent)";$("connectBtn").style.display="inline-block";$("connectBtn").textContent="Connect";$("reloadAuthBtn").style.display="none";$("disconnectBtn").style.display="none"}updateStatusIndicator(s)}catch{}},5000);
+async function checkForUpdates(){const btn=$("checkUpdatesBtn");btn.disabled=true;btn.textContent="Checking...";try{const r=await window.electronAPI.checkForUpdates();if(r.status==="up-to-date")showToast("You're up to date!");else if(r.status==="downloading")showToast("Downloading update v"+r.version+"...");else if(r.status==="downloaded")showToast("Update downloaded! Restart to install.");else if(r.status==="skipped")showToast("Update skipped");else if(r.status==="error")showToast("Update check failed: "+(r.message||"unknown"));else if(r.status==="timeout")showToast("Update check timed out");else if(r.status==="dev-mode")showToast("Updates unavailable in dev mode");else if(r.status==="pending")showToast("Check already in progress")}catch{showToast("Update check failed")}finally{btn.disabled=false;btn.textContent="Check for Updates"}}
+window.electronAPI.getCurrentVersion().then(v=>{$("currentVersion").textContent="v"+v;$("versionBadge").textContent="v"+v}).catch(()=>{$("currentVersion").textContent="v—";$("versionBadge").textContent="v—"});
 </script>
 </body>
 </html>
