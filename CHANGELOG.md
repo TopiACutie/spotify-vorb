@@ -1,6 +1,12 @@
 # Spotify VORB — Changelog
 
 
+## v3.6.2 (2026-05-21)
+Fix marquee scrolling when text fits
+
+### Fixed
+- **Marquee scrolling when text fits** — title, artist, and album text was scrolling even when it fit within the orb. `updateMarquee()` now uses `requestAnimationFrame` to measure after layout settles, with a `+1px` tolerance to prevent sub-pixel rounding false positives. Text only scrolls when it genuinely overflows.
+
 ## v3.6.1 (2026-05-21)
 Remove visualizer fill, optimize renderer, remove unused code
 
